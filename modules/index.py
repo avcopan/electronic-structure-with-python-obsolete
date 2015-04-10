@@ -6,15 +6,20 @@ import numpy as np
 class Index:
 
   def __init__(self, ngen, nocc, genstring, occstring, virstring):
-    self.ngen = ngen
-    self.nocc = nocc
-    self.nvir = ngen - nocc
-    self.gen  = [ char for char in genstring.lower() + genstring.upper() ]
-    self.occ  = [ char for char in occstring.lower() + occstring.upper() ]
-    self.vir  = [ char for char in virstring.lower() + virstring.upper() ]
+    slicedict = {}
+    slicedict.update( { gen:slice(0   , ngen) for gen in genstring } )
+    slicedict.update( { occ:slice(0   , nocc) for occ in occstring } )
+    slicedict.update( { vir:slice(nocc, ngen) for vir in virstring } )
+    self.ngen, self.nocc, self.slicedict = ngen, nocc, slicedict
+
+  def indexslice(self, index):
+    return tuple( self.slicedict(char) for char in index )
+
+  
 
 
-class BlockArray(np.ndarray):
+
+class ArrayBlock(np.ndarray):
 
   def __new__(cls, array, index):
     obj = np.asarray(array).view(cls)
@@ -26,6 +31,6 @@ class BlockArray(np.ndarray):
     self.index = getattr(obj, 'index', None)
 
   def __array_wrap__(self, array, context=None):
-    return np.ndarray.__array_wrap__(self, array, context)
+    return np.asarray(array)
 
 
