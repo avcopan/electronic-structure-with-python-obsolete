@@ -1,36 +1,39 @@
 import numpy as np
+from block import ArrayBlock, get_slices
 
-'''Index class -- allows specification of index ranges for numpy.einsum, as
-   well as general linear combinations of numpy.einsum contractions with
+'''Index class -- allows specification of index ranges for einsum/tensordot,
+   as well as general linear combinations of tensordot contractions with
    permutation and weighting coefficients.'''
 class Index:
 
-  def __init__(self, ngen, nocc, genstring, occstring, virstring):
-    slicedict = {}
-    slicedict.update( { gen:slice(0   , ngen) for gen in genstring } )
-    slicedict.update( { occ:slice(0   , nocc) for occ in occstring } )
-    slicedict.update( { vir:slice(nocc, ngen) for vir in virstring } )
-    self.ngen, self.nocc, self.slicedict = ngen, nocc, slicedict
-
-  def indexslice(self, index):
-    return tuple( self.slicedict(char) for char in index )
-
-  
-
-
-
-class ArrayBlock(np.ndarray):
-
-  def __new__(cls, array, index):
-    obj = np.asarray(array).view(cls)
-    obj.index = index
-    return obj
+    def __init__(self, dim, genchars):
+      self.dim = dim
+      self.genchars = genchars
+      self.rangedict = {}
+      self.add_index_range(0, dim, genchars)
  
-  def __array_finalize__(self, obj):
-    if obj is None: return
-    self.index = getattr(obj, 'index', None)
+    def add_index_range(self, start, stop, chars):
+      if 0 <= start <= stop <= self.dim:
+        self.rangedict.update( { char:(start,stop) for char in chars } )
+      else:
+        raise Exception('Inconsistent index range {} for dimension {:d}'.format((start, stop), self.dim))
 
-  def __array_wrap__(self, array, context=None):
-    return np.asarray(array)
+    def get_zeros_block(self, index):
+      ranges = [ self.rangedict[char] for char in index ]
+      shape = tuple(stop-start for start, stop in ranges)
+      return ArrayBlock( np.zeros(shape), ranges )
+ 
+    def trim_block(self, block, index):
+      if not type(block) is ArrayBlock: block = ArrayBlock( block, [ (0, self.dim) ] * block.ndim )
+      subblock      = self.get_zeros_block(index)
+      slices        = get_slices(subblock.axisranges, block.axisranges)
+      subblock      = block[slices]
+      return subblock
 
+    def extend_block(self, subblock, index):
+      block         = self.get_zeros_block(index)
+      slices        = get_slices(subblock.axisranges, block.axisranges)
+      block[slices] = subblock
+      return block
+      
 
