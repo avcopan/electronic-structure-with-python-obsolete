@@ -18,22 +18,62 @@ class Index:
       else:
         raise Exception('Inconsistent index range {} for dimension {:d}'.format((start, stop), self.dim))
 
+    def get_ranges(self, index):
+      return [ self.rangedict[char] for char in index ]
+
     def get_zeros_block(self, index):
-      ranges = [ self.rangedict[char] for char in index ]
-      shape = tuple(stop-start for start, stop in ranges)
+      ranges = self.get_ranges(index)
+      shape  = tuple(stop-start for start, stop in ranges)
       return ArrayBlock( np.zeros(shape), ranges )
  
     def trim_block(self, block, index):
-      if not type(block) is ArrayBlock: block = ArrayBlock( block, [ (0, self.dim) ] * block.ndim )
-      subblock      = self.get_zeros_block(index)
-      slices        = get_slices(subblock.axisranges, block.axisranges)
-      subblock      = block[slices]
-      return subblock
+      if type(block) is np.ndarray: block = ArrayBlock( block, [ (0, self.dim) ] * block.ndim )
+      subranges = self.get_ranges(index)
+      slices    = get_slices(subranges, block.ranges)
+      return ArrayBlock( block.array[slices], subranges )
 
     def extend_block(self, subblock, index):
-      block         = self.get_zeros_block(index)
-      slices        = get_slices(subblock.axisranges, block.axisranges)
-      block[slices] = subblock
+      block               = self.get_zeros_block(index)
+      slices              = get_slices(subblock.ranges, block.ranges)
+      block.array[slices] = subblock.array
       return block
-      
+
+    def einsum(self, targetindex, *blockindexpairs):
+      arrayarg    = tuple( self.trim_block(block, index).array for block, index in blockindexpairs )
+      indexarg    = ",".join( index for block, index in blockindexpairs ) + "->" + targetindex
+      array       = np.einsum(indexarg,*arrayarg)
+      ranges      = self.get_ranges(targetindex)
+      return ArrayBlock(array, ranges)
+
+    def eindot(self, targetindex, *blockindexpairs):
+      pairs        = [ (self.trim_block(block,index).array, index) for block, index in blockindexpairs ]
+      array, index = pairs.pop(0)
+      for pair in pairs: array, index = dot((array, index), pair)
+      array        = reorder_axes(array,targetindex,index)
+      ranges       = self.get_ranges(targetindex)
+      return ArrayBlock(array, ranges)
+
+    def meinsum(self, targetindex, coefficient, permutations *blockindexpairs):
+      array  = coefficient * self.eindot(targetindex, *blockindexpairs).array
+      array  = sum( parity * reorder_axes(permute(targetindex), targetindex, array)
+                    for parity, permute in permutations )
+      ranges = self.get_ranges(targetindex)
+      return ArrayBlock(array, ranges)
+
+    def meinsums(self, targetindex, *meinsumargs):
+      array = sum( self.meinsum(targetindex, *tuple(meinsumarg)) for meinsumarg in meindotargs )
+
+
+
+def dot((array0, index0), (array1, index1)):
+  axes0 = [ index0.index(char) for char in index0 if char in index1 ]
+  axes1 = [ index1.index(char) for char in index0 if char in index1 ]
+  array = np.tensordot(array0, array1, (axes0, axes1))
+  index = ''.join( char for char in index0+index1 if not (char in index0 and char in index1) )
+  return array, index
+
+def reorder_axes(array, newindex, oldindex):
+  axistuple = tuple( oldindex.index(char) for char in newindex )
+  return array.transpose(axistuple)
+  
 

@@ -1,23 +1,12 @@
 import numpy as np
 
-class ArrayBlock(np.ndarray):
+class ArrayBlock:
+    def __init__(self, array, ranges):
+      if not check_ranges(array.shape, ranges):
+        raise Exception('Inconsistent shape {} for block ranges {}'.format(array.shape, ranges))
+      self.array  = array
+      self.ranges = ranges
 
-    def __new__(cls, array, axisranges):
-      if not check_ranges(array.shape, axisranges):
-        raise Exception('Inconsistent shape {} for block ranges {}'.format(array.shape, axisranges))
-      block = np.asarray(array).view(cls)
-      block.axisranges = axisranges
-      return block
-  
-    def __array_finalize__(self, block):
-      if block is None: return
-      self.axisranges = getattr(block, 'axisranges', None)
-
-    def __array_wrap__(self, outblock, context=None):
-      if check_ranges( outblock.shape, outblock.axisranges ):
-        return np.ndarray.__array_wrap__(self, outblock, context)
-      else:
-        return np.array(outblock)
 
 def check_ranges(shape, ranges):
   for i, (start, stop) in enumerate(ranges):
