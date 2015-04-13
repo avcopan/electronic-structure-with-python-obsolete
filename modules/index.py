@@ -61,7 +61,9 @@ class Index:
       return ArrayBlock(array, ranges)
 
     def meinsums(self, targetindex, *meinsumargs):
-      array = sum( self.meinsum(targetindex, *tuple(meinsumarg)) for meinsumarg in meindotargs )
+      array  = sum( self.meinsum(targetindex, *tuple(meinsumarg)) for meinsumarg in meinsumargs )
+      ranges = self.get_ranges(targetindex)
+      return ArrayBlock(array, ranges)
 
 
 
