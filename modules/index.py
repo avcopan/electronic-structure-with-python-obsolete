@@ -27,7 +27,7 @@ class Index:
       return ArrayBlock( np.zeros(shape), ranges )
  
     def trim_block(self, block, index):
-      if type(block) is np.ndarray: block = ArrayBlock( block, [ (0, self.dim) ] * block.ndim )
+      if type(block) in [np.ndarray, np.matrix]: block = ArrayBlock( block, [ (0, self.dim) ] * block.ndim )
       subranges = self.get_ranges(index)
       slices    = get_slices(subranges, block.ranges)
       return ArrayBlock( block.array[slices], subranges )
@@ -48,12 +48,12 @@ class Index:
     def eindot(self, targetindex, *blockindexpairs):
       pairs        = [ (self.trim_block(block,index).array, index) for block, index in blockindexpairs ]
       array, index = pairs.pop(0)
-      for pair in pairs: array, index = dot((array, index), pair)
+      for pair in pairs: array, index = tensordot((array, index), pair)
       array        = reorder_axes(array,targetindex,index)
       ranges       = self.get_ranges(targetindex)
       return ArrayBlock(array, ranges)
 
-    def meinsum(self, targetindex, coefficient, permutations *blockindexpairs):
+    def meinsum(self, targetindex, coefficient, permutations, *blockindexpairs):
       array  = coefficient * self.eindot(targetindex, *blockindexpairs).array
       array  = sum( parity * reorder_axes(permute(targetindex), targetindex, array)
                     for parity, permute in permutations )
@@ -65,9 +65,16 @@ class Index:
       ranges = self.get_ranges(targetindex)
       return ArrayBlock(array, ranges)
 
+    def meinblock(self, targetindex, *meinsumargs):
+      array  = sum( self.extend_block(self.meinsum(*tuple(meinsumarg)), targetindex) for meinsumarg in meinsumargs )
+      ranges = self.get_ranges(targetindex)
+      return ArrayBlock(array, ranges)
+
+    
 
 
-def dot((array0, index0), (array1, index1)):
+
+def tensordot((array0, index0), (array1, index1)):
   axes0 = [ index0.index(char) for char in index0 if char in index1 ]
   axes1 = [ index1.index(char) for char in index0 if char in index1 ]
   array = np.tensordot(array0, array1, (axes0, axes1))
