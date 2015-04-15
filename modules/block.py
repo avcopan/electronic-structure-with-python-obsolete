@@ -1,11 +1,53 @@
 import numpy as np
 
 class ArrayBlock:
+
     def __init__(self, array, ranges):
+      if not type(array) in (np.ndarray, np.matrix):
+        raise Exception('Incorrect type {} for ArrayBlock.array'.format(type(array)))
       if not check_ranges(array.shape, ranges):
         raise Exception('Inconsistent shape {} for block ranges {}'.format(array.shape, ranges))
       self.array  = array
       self.ranges = ranges
+
+    def __mul__(self, other):
+      if isinstance(other, ArrayBlock):
+        return ArrayBlock( other.array * self.array, self.ranges )
+      else:
+        return ArrayBlock( other       * self.array, self.ranges )
+
+    def __rmul__(self, other):
+      if isinstance(other, ArrayBlock):
+        return ArrayBlock( self.array * other.array, self.ranges )
+      else:                               
+        return ArrayBlock( self.array * other      , self.ranges )
+
+    def __add__(self, other):
+      if isinstance(other, ArrayBlock):
+        return ArrayBlock( other.array + self.array, self.ranges )
+      else:
+        return ArrayBlock( other       + self.array, self.ranges )
+
+    def __radd__(self, other):
+      if isinstance(other, ArrayBlock):
+        return ArrayBlock( other.array + self.array, self.ranges )
+      else:
+        return ArrayBlock( other       + self.array, self.ranges )
+
+    def __sub__(self, other):
+      if isinstance(other, ArrayBlock):
+        return ArrayBlock( other.array - self.array, self.ranges )
+      else:
+        return ArrayBlock( other       - self.array, self.ranges )
+
+    def __rsub__(self, other):
+      if isinstance(other, ArrayBlock):
+        return ArrayBlock( other.array - self.array, self.ranges )
+      else:
+        return ArrayBlock( other       - self.array, self.ranges )
+
+    def transpose(self, axistuple):
+      return ArrayBlock( self.array.transpose(axistuple), [self.ranges[axis] for axis in axistuple] )
 
 
 def check_ranges(shape, ranges):

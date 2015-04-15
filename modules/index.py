@@ -43,7 +43,7 @@ class Index:
       indexarg    = ",".join( index for block, index in blockindexpairs ) + "->" + targetindex
       array       = np.einsum(indexarg,*arrayarg)
       ranges      = self.get_ranges(targetindex)
-      return ArrayBlock(array, ranges)
+      return ArrayBlock(array, ranges) if not array.shape is () else array
 
     def eindot(self, targetindex, *blockindexpairs):
       pairs        = [ (self.trim_block(block,index).array, index) for block, index in blockindexpairs ]
@@ -51,26 +51,20 @@ class Index:
       for pair in pairs: array, index = tensordot((array, index), pair)
       array        = reorder_axes(array,targetindex,index)
       ranges       = self.get_ranges(targetindex)
-      return ArrayBlock(array, ranges)
+      return ArrayBlock(array, ranges) if not array.shape is () else array
 
     def meinsum(self, targetindex, coefficient, permutations, *blockindexpairs):
-      array  = coefficient * self.eindot(targetindex, *blockindexpairs).array
-      array  = sum( parity * reorder_axes(permute(targetindex), targetindex, array)
-                    for parity, permute in permutations )
-      ranges = self.get_ranges(targetindex)
-      return ArrayBlock(array, ranges)
+      block = coefficient * self.eindot(targetindex, *blockindexpairs)
+      return sum( parity * reorder_axes(block, permute(targetindex), targetindex)
+                  for parity, permute in permutations )
 
     def meinsums(self, targetindex, *meinsumargs):
-      array  = sum( self.meinsum(targetindex, *tuple(meinsumarg)) for meinsumarg in meinsumargs )
-      ranges = self.get_ranges(targetindex)
-      return ArrayBlock(array, ranges)
+      return sum( self.meinsum(targetindex,*tuple(meinsumarg))
+                  for meinsumarg in meinsumargs )
 
     def meinblock(self, targetindex, *meinsumargs):
-      array  = sum( self.extend_block(self.meinsum(*tuple(meinsumarg)), targetindex) for meinsumarg in meinsumargs )
-      ranges = self.get_ranges(targetindex)
-      return ArrayBlock(array, ranges)
-
-    
+      return sum( self.extend_block( self.meinsum(*tuple(meinsumarg)), targetindex )
+                  for meinsumarg in meinsumargs ) # ^this is a mess -- sorry
 
 
 

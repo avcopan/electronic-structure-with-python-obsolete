@@ -8,14 +8,14 @@ class SpinOrbital:
 
     def __init__(self, scfwfn, mints):
       nocc = scfwfn.nalpha() + scfwfn.nbeta()
-      nbf  = mints.basisset().nbf() * 2
-      indx = Index(nbf, 'pqrsPQRS')
+      dim  = mints.basisset().nbf() * 2
+      indx = Index(dim, 'pqrsPQRS')
       indx.add_index_range(0   , nocc, 'ijkl')
-      indx.add_index_range(nocc,  nbf, 'abcd')
+      indx.add_index_range(nocc,  dim, 'abcd')
       # grab integrals and project out symmetry
       C1 = mints.petite_list().sotoao() # Sym -> C1 projection matrix
-      Fa = psi4.Matrix(nbf/2, nbf/2)
-      Fb = psi4.Matrix(nbf/2, nbf/2)
+      Fa = psi4.Matrix(dim/2, dim/2)
+      Fb = psi4.Matrix(dim/2, dim/2)
       Fa.remove_symmetry(scfwfn.Fa(), C1)
       Fb.remove_symmetry(scfwfn.Fb(), C1)
       Sa = mints.ao_overlap()
@@ -32,7 +32,7 @@ class SpinOrbital:
       # compute integrals
       H = block_matrix_aa(Ta) + block_matrix_aa(Va)
       G = block_4darray(Ga).swapaxes(1,2) # < mu nu | rh si >, phys. notation
-      self.nocc, self.nbf, self.indx = nocc, nbf, indx
+      self.nocc, self.dim, self.indx = nocc, dim, indx
       self.e, self.C, self.S, self.H, self.G, self.F = e, C, S, H, G, F
 
     def build_Ep1(self, fockmat=None):

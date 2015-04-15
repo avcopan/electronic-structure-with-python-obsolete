@@ -1,6 +1,10 @@
 import itertools as it
 from string import maketrans
 
+'''Permutation functions -- e.g. Permute("ij/k|ab/cde/f|...") accepts arbitrary
+   permutation arguments in the notation of Bartlett & Shavitt.  Sorry it's a
+   somewhat clumsily written at the moment.'''
+
 Identity = [( 1, lambda x: x )]
 
 def Permute(barstring):
@@ -28,9 +32,9 @@ def restricted_permutations( slashstring ):
   substrings = slashstring.split('/')
   refstring  = ''.join(substrings)
   poolbyposition = tuple( refstring.replace(substring,char) for substring in substrings for char in substring )
-  # for "ij/k": the allowed values at position 1 are i and k, so poolbyposition[1] = 'ik'
+  # for "ij/k": the allowed values at position 1 are i and k, so poolbyposition[1] = 'ik', etc.
   n = len(refstring)
-  for p in it.product( *poolbyposition ): # cartesian product of position values -- only keep the permutations
+  for p in it.product( *poolbyposition ): # cartesian product of position values -- only keep true permutations
     if len(set(p)) == n: yield ''.join(p)
 
 def parity( refstring, perstring ):
