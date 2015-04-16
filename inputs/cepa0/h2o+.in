@@ -13,6 +13,7 @@ set scf_type pk
 Escf  = energy('scf')
 
 # call my python module
+# note: you need modules/ and codes/ in your PYTHONPATH to run this
 from cepa0.cepa0 import SpinOrbCEPA0
 
 scfwfn = psi4.wavefunction()
