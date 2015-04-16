@@ -59,12 +59,10 @@ class Index:
                   for parity, permute in permutations )
 
     def meinsums(self, targetindex, *meinsumargs):
-      return sum( self.meinsum(targetindex,*tuple(meinsumarg))
-                  for meinsumarg in meinsumargs )
+      return sum( self.meinsum(targetindex, *meinsumarg) for meinsumarg in meinsumargs )
 
     def meinblock(self, targetindex, *meinsumargs):
-      return sum( self.extend_block( self.meinsum(*tuple(meinsumarg)), targetindex )
-                  for meinsumarg in meinsumargs ) # ^this is a mess -- sorry
+      return sum( self.extend_block(self.meinsum(*meinsumarg), targetindex) for meinsumarg in meinsumargs )
 
 
 

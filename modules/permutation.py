@@ -2,8 +2,8 @@ import itertools as it
 from string import maketrans
 
 '''Permutation functions -- e.g. Permute("ij/k|ab/cde/f|...") accepts arbitrary
-   permutation arguments in the notation of Bartlett & Shavitt.  Sorry it's a
-   somewhat clumsily written at the moment.'''
+   permutation arguments in the notation of Bartlett & Shavitt.  Code is a bit
+   ugly at the moment.'''
 
 Identity = [( 1, lambda x: x )]
 
@@ -13,13 +13,11 @@ def Permute(barstring):
   permutationlists = tuple( string_to_permutationlist(string) for string in strings )
   for p in it.product( *permutationlists ):
     perstring = ''.join(subperstrings for subperstrings in p)
-    yield ( parity(refstring, perstring), lambda x: x.translate(maketrans(refstring, perstring)) )
+    yield ( parity(refstring,perstring), lambda x:trans(x,refstring,perstring) )
 
 def Transpose(barstring):
-  lower, upper = tuple(barstring.split("|")) # argument should have the form "pqr|stu"
-  return [( 1, lambda x: x.translate(maketrans(lower+upper,lower+upper)) ),
-          ( 1, lambda x: x.translate(maketrans(lower+upper,upper+lower)) )]
-
+  p, q = tuple(barstring.split("|")) # argument should have the form "pqr|stu"
+  return [(1, lambda x:trans(x,p+q,p+q)), (1, lambda x:trans(x,q+p,p+q)) ]
 
 
 '''HELPER FUNCTIONS'''
@@ -47,6 +45,8 @@ def parity( refstring, perstring ):
       perstring = perstring.translate(maketrans( perchar+refchar, refchar+perchar ))
   return sgn
 
+def translate(string, perstring, refstring):
+  return string.translate(maketrans(perstring, refstring))
 
 
 '''
