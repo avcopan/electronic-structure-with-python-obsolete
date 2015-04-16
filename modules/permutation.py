@@ -42,10 +42,10 @@ def parity( refstring, perstring ):
     perchar, refchar = perstring[i], refstring[i]
     if perchar != refchar:
       sgn *= -1.0 # flip sign, then remove transposition by swapping characters to reference position
-      perstring = perstring.translate(maketrans( perchar+refchar, refchar+perchar ))
+      perstring = trans(perstring, perchar+refchar, refchar+perchar)
   return sgn
 
-def translate(string, perstring, refstring):
+def trans(string, perstring, refstring):
   return string.translate(maketrans(perstring, refstring))
 
 
