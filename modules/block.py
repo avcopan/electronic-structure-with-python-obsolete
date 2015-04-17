@@ -12,42 +12,52 @@ class ArrayBlock:
 
     def __mul__(self, other):
       if isinstance(other, ArrayBlock):
-        return ArrayBlock( other.array * self.array, self.ranges )
+        return ArrayBlock(other.array * self.array, self.ranges)
       else:
-        return ArrayBlock( other       * self.array, self.ranges )
+        return ArrayBlock(other       * self.array, self.ranges)
 
     def __rmul__(self, other):
       if isinstance(other, ArrayBlock):
-        return ArrayBlock( self.array * other.array, self.ranges )
-      else:                               
-        return ArrayBlock( self.array * other      , self.ranges )
+        return ArrayBlock(self.array * other.array, self.ranges)
+      else:                              
+        return ArrayBlock(self.array * other      , self.ranges)
 
     def __add__(self, other):
       if isinstance(other, ArrayBlock):
-        return ArrayBlock( other.array + self.array, self.ranges )
+        return ArrayBlock(other.array + self.array, self.ranges)
       else:
-        return ArrayBlock( other       + self.array, self.ranges )
+        return ArrayBlock(other       + self.array, self.ranges)
 
     def __radd__(self, other):
       if isinstance(other, ArrayBlock):
-        return ArrayBlock( other.array + self.array, self.ranges )
+        return ArrayBlock(other.array + self.array, self.ranges)
       else:
-        return ArrayBlock( other       + self.array, self.ranges )
+        return ArrayBlock(other       + self.array, self.ranges)
 
     def __sub__(self, other):
       if isinstance(other, ArrayBlock):
-        return ArrayBlock( other.array - self.array, self.ranges )
+        return ArrayBlock(other.array - self.array, self.ranges)
       else:
-        return ArrayBlock( other       - self.array, self.ranges )
+        return ArrayBlock(other       - self.array, self.ranges)
 
     def __rsub__(self, other):
       if isinstance(other, ArrayBlock):
-        return ArrayBlock( other.array - self.array, self.ranges )
+        return ArrayBlock(other.array - self.array, self.ranges)
       else:
-        return ArrayBlock( other       - self.array, self.ranges )
+        return ArrayBlock(other       - self.array, self.ranges)
 
     def transpose(self, axistuple):
-      return ArrayBlock( self.array.transpose(axistuple), [self.ranges[axis] for axis in axistuple] )
+      return ArrayBlock(self.array.transpose(axistuple), [self.ranges[axis] for axis in axistuple])
+
+    def trim_block(self, ranges):
+      slices = get_slices(ranges, self.ranges)
+      return ArrayBlock(self.array[slices], ranges)
+
+    def extend_block(self, ranges):
+      slices = get_slices(self.ranges, ranges)
+      array  = np.zeros(tuple(stop-start for start, stop in ranges))
+      array[slices] = self.array
+      return ArrayBlock(array, ranges)
 
 
 def check_ranges(shape, ranges):

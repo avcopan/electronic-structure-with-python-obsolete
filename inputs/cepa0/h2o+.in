@@ -1,4 +1,4 @@
-molecule h2o {
+molecule {
   1 2
   O 
   H 1 0.96
@@ -7,9 +7,9 @@ molecule h2o {
 set e_convergence 13
 set d_convergence 13
 set maxiter       100
-set basis     sto-3g
-set reference uhf
-set scf_type pk
+set basis         sto-3g
+set reference     uhf
+set scf_type      pk
 Escf  = energy('scf')
 
 # call my python module
