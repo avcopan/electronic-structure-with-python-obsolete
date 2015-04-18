@@ -38,7 +38,7 @@ class SpinOrbital:
     def build_Ep1(self, fockmat=None):
       indx, nocc = self.indx, self.nocc
       if fockmat is None: fockmat = self.build_mo_F()
-      D        = indx.get_zeros_block("ia")
+      D        = indx.zeros("ia")
       fpp      = np.diag(fockmat)
       fii, faa = fpp[:nocc], fpp[nocc:]
       D.array  = 1./(fii.reshape(-1,1) - faa.reshape(1,-1))
@@ -47,7 +47,7 @@ class SpinOrbital:
     def build_Ep2(self, fockmat=None):
       indx, nocc = self.indx, self.nocc
       if fockmat is None: fockmat = self.build_mo_F()
-      D        = indx.get_zeros_block("ijab")
+      D        = indx.zeros("ijab")
       fpp      = np.diag(fockmat)
       fii, faa = fpp[:nocc], fpp[nocc:]
       D.array  = 1./( fii.reshape(-1,1,1,1) + fii.reshape(1,-1,1,1)
@@ -57,7 +57,7 @@ class SpinOrbital:
     def build_Ep3(self, fockmat=None):
       indx, nocc = self.indx, self.nocc
       if fockmat is None: fockmat = self.build_mo_F()
-      D        = indx.get_zeros_block("ijkabc")
+      D        = indx.zeros("ijkabc")
       fpp      = np.diag(fockmat)
       fii, faa = fpp[:nocc], fpp[nocc:]
       D.array  = 1./( fii.reshape(-1,1,1,1,1,1) + fii.reshape(1,-1,1,1,1,1) + fii.reshape(1,1,-1,1,1,1)

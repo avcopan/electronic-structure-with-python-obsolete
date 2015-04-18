@@ -46,7 +46,7 @@ class SpinOrbODC12:
         G1  = K + T
 
         G2  = indx.meinblock('pqrs',
-                #['pqrs', 1.  , P("rs")    , (G1,"pr" ), (G1,"qs" )],
+                ['pqrs', 1.  , P("rs")    , (G1,"pr" ), (G1,"qs" )],
                 ['ijab', 1.  , Tp("ij|ab"), (L,"ijab")            ],
                 ['ijkl', 1./2, I          , (L,"ijab"), (L,"klab")],
                 ['abcd', 1./2, I          , (L,"ijab"), (L,"ijcd")],

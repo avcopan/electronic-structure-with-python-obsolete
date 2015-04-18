@@ -1,5 +1,5 @@
 import numpy as np
-from block import ArrayBlock
+from block import ArrayBlock, zeros
 
 '''Index class -- allows specification of index ranges for einsum/tensordot,
    as well as general linear combinations of tensordot contractions with
@@ -22,7 +22,7 @@ class Index:
 
     def zeros(self, index):                  return zeros(self.get_ranges(index))
 
-    def extend_block(self, subblock, index): return block.extend_block(self.get_ranges(index))
+    def extend_block(self, block, index): return block.extend_block(self.get_ranges(index))
  
     def trim_block(self, block, index):
       if type(block) in [np.ndarray, np.matrix]: block = ArrayBlock( block, [ (0, self.dim) ] * block.ndim )

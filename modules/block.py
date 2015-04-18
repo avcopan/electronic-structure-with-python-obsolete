@@ -17,6 +17,9 @@ class ArrayBlock:
         return ArrayBlock(operation(self.array, other.array), self.ranges)
       else:
         ranges = [(min(start1,start2), max(stop1,stop2)) for (start1,start2),(stop1,stop2) in zip(self.ranges, other.ranges)]
+        array1 =  self.extend_block(ranges)
+        array2 = other.extend_block(ranges)
+        return ArrayBlock(operation(array1, array2), ranges)
 
     def __pos__(self): return ArrayBlock(+self.array, self.ranges)
     def __neg__(self): return ArrayBlock(-self.array, self.ranges)
