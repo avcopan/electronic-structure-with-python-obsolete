@@ -77,9 +77,6 @@ def asblock(array):
   ranges = [(0, dim) for dim in array.shape]
   return ArrayBlock(array, ranges, array.shape)
 
-def asarray(arrblock):
-  return extend(arrblock, arrblock.arrayranges).view()
-
 def get_shape(ranges):
   return tuple(stop-start for start, stop in ranges)
 
