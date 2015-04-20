@@ -13,11 +13,12 @@ def Permute(barstring):
   permutationlists = tuple( string_to_permutationlist(string) for string in strings )
   for p in it.product( *permutationlists ):
     perstring = ''.join(subperstrings for subperstrings in p)
-    yield ( parity(refstring,perstring), lambda x:trans(x,refstring,perstring) )
+    yield ( sgn(refstring,perstring), per(refstring,perstring) )
 
 def Transpose(barstring):
-  p, q = tuple(barstring.split("|")) # argument should have the form "pqr|stu"
-  return [(1, lambda x:trans(x,p+q,p+q)), (1, lambda x:trans(x,q+p,p+q)) ]
+  ij  , ab   = tuple(barstring.split("|")) # argument should have the form "pqr|stu"
+  ijab, abij = ij+ab, ab+ij
+  return [(1, per(ijab,ijab)), (1, per(ijab,abij)) ]
 
 
 '''HELPER FUNCTIONS'''
@@ -26,27 +27,30 @@ def string_to_permutationlist( string ):
   slashstring = string if '/' in string else '/'.join(list(string))
   return [ permutation for permutation in restricted_permutations( slashstring ) ]
 
-def restricted_permutations( slashstring ):
+def restricted_permutations(slashstring):
   substrings = slashstring.split('/')
   refstring  = ''.join(substrings)
-  poolbyposition = tuple( refstring.replace(substring,char) for substring in substrings for char in substring )
+  poolbyposition = tuple(refstring.replace(substring,char) for substring in substrings for char in substring)
   # for "ij/k": the allowed values at position 1 are i and k, so poolbyposition[1] = 'ik', etc.
   n = len(refstring)
   for p in it.product( *poolbyposition ): # cartesian product of position values -- only keep true permutations
     if len(set(p)) == n: yield ''.join(p)
 
-def parity( refstring, perstring ):
+def sgn(refstring, perstring):
   n = len(refstring)
   sgn = 1.0
   for i in range(n): # loop over string positions, counting the number of transposed elements
     perchar, refchar = perstring[i], refstring[i]
     if perchar != refchar:
       sgn *= -1.0 # flip sign, then remove transposition by swapping characters to reference position
-      perstring = trans(perstring, perchar+refchar, refchar+perchar)
+      perstring = swap(perstring, refchar, perchar)
   return sgn
 
-def trans(string, perstring, refstring):
-  return string.translate(maketrans(perstring, refstring))
+def per(perstring, refstring):
+  return lambda string: string.translate(maketrans(perstring, refstring))
+
+def swap(string, char1, char2):
+  return string.translate(maketrans(char1+char2, char2+char1))
 
 
 '''
