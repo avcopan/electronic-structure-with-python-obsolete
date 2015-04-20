@@ -1,100 +1,46 @@
 import itertools as it
-from string import maketrans
+import string    as st
 
-'''Permutation functions -- e.g. Permute("ij/k|ab/cde/f|...") accepts arbitrary
-   permutation arguments in the notation of Bartlett & Shavitt.  Code is a bit
-   ugly at the moment.'''
+'''helper functions'''
 
-Identity = [( 1, lambda x: x )]
+def permute_nonequivalent(string):
+  if not '/' in string: string = '/'.join(string)
+  subs  = st.split(string, '/')
+  ref   = st.translate(string, None, '/')
+  pools = [st.replace(ref, sub, char) for sub in subs for char in sub]
+  for prod in it.product(*pools):
+    if len(prod) == len(set(prod)):
+      yield prod
 
-def Permute(barstring):
-  strings = tuple(barstring.split("|"))
-  refstring  = ''.join(strings).replace('/','')
-  permutationlists = tuple( string_to_permutationlist(string) for string in strings )
-  for p in it.product( *permutationlists ):
-    perstring = ''.join(subperstrings for subperstrings in p)
-    yield ( sgn(refstring,perstring), per(refstring,perstring) )
-
-def Transpose(barstring):
-  ij  , ab   = tuple(barstring.split("|")) # argument should have the form "pqr|stu"
-  ijab, abij = ij+ab, ab+ij
-  return [(1, per(ijab,ijab)), (1, per(ijab,abij)) ]
-
-
-'''HELPER FUNCTIONS'''
-
-def string_to_permutationlist( string ):
-  slashstring = string if '/' in string else '/'.join(list(string))
-  return [ permutation for permutation in restricted_permutations( slashstring ) ]
-
-def restricted_permutations(slashstring):
-  substrings = slashstring.split('/')
-  refstring  = ''.join(substrings)
-  poolbyposition = tuple(refstring.replace(substring,char) for substring in substrings for char in substring)
-  # for "ij/k": the allowed values at position 1 are i and k, so poolbyposition[1] = 'ik', etc.
-  n = len(refstring)
-  for p in it.product( *poolbyposition ): # cartesian product of position values -- only keep true permutations
-    if len(set(p)) == n: yield ''.join(p)
-
-def sgn(refstring, perstring):
-  n = len(refstring)
-  sgn = 1.0
-  for i in range(n): # loop over string positions, counting the number of transposed elements
-    perchar, refchar = perstring[i], refstring[i]
-    if perchar != refchar:
-      sgn *= -1.0 # flip sign, then remove transposition by swapping characters to reference position
-      perstring = swap(perstring, refchar, perchar)
+def parity(ref, per):
+  sgn, per = +1, list(per)
+  for c in ref:
+    i, j = ref.index(c), per.index(c)
+    sgn *= -1 if not i is j else +1
+    per[i], per[j] = per[j], per[i]
   return sgn
 
-def per(perstring, refstring):
-  return lambda string: string.translate(maketrans(perstring, refstring))
+def pair(ref, per, sign=False):
+  sgn = parity(ref, per) if sign else +1
+  pmt = lambda x: st.translate(x, st.maketrans(ref, per))
+  return sgn, pmt
 
-def swap(string, char1, char2):
-  return string.translate(maketrans(char1+char2, char2+char1))
+'''use these'''
 
+Identity = [pair('','')]
 
-'''
-Permute() function
+def Permute(string):
+  subs    = st.split(string, '|')
+  ref     = st.translate(string, None, '/|')
+  subpers = [permute_nonequivalent(sub) for sub in subs]
+  for prod in it.product(*subpers):
+    per = ''.join(it.chain(*prod))
+    yield   pair(ref, per, sign=True)
 
-   Explanation for future reference: for an argument *strings = "ijk", "ab/cd", ...
-   permutationlists will be a tuple of lists returned by string_to_permutationlist
-   calls
-           string_to_permutationlist("ijk")
-           string_to_permutationlist("ab/cd") ...
-   It will look like this:
-           ( ["ijk", "ikj", "jik", "jki", "kij", "kji"],
-             ["abcd", "acbd", "adcb", "cbad", "cdab", "cdba", "dbca", "dcab", "dcba"],
-             .... )
-   We then loop over the Cartesian product of these lists to determine
-           P("ijk|ab/cd|...") = P("ijk") * P("ab/cd") * ...
-   which looks like this:
-           ("ijk", "abcd", ...),
-           ("ijk", "acbd", ...),
-           ("ijk", "adcb", ...),
-           ("ijk", "cbad", ...),
-           ("ijk", "cdab", ...),
-           ("ijk", "cdba", ...),
-           ("ijk", "dbca", ...),
-           ("ijk", "dcab", ...),
-           ("ijk", "dcba", ...),
-           ("ikj", "abcd", ...), ...
-   Then we join the elements in each tuple and determine the parity and translation
-   table from each overall permutation, by comparing with the reference string 
-   "ijkabcd...".  The parity gets passed back as a float and the permutation itself
-   gets passed as a string translation operator.
+def Transpose(string):
+  subs    = st.split(string, '|')
+  ref     = st.translate(string, None, '|')
+  for per in it.permutations(subs):
+    per = ''.join(per)
+    yield   pair(ref, per)
 
-   To test it, use
-
-def check_permutations(targetstring, barstring):
-  for parity, permute in Permute(barstring):
-    print '{:2d} {:s}'.format( int(parity), permute(targetstring) )
-
-   For example:
-
->>> check_permutations("ijab","ij|ab")
- 1 ijab
--1 ijba
--1 jiab
- 1 jiba
-
-'''

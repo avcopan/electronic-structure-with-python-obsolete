@@ -82,7 +82,7 @@ def asblock(array, arrayranges = False):
 def get_containing_ranges(ranges1, ranges2):
   return [(min(start1,start2), max(stop1,stop2)) for (start1,stop1),(start2,stop2) in zip(ranges1, ranges2)]
 
-def get_slices(ranges1, ranges2=None):
+def get_slices(ranges1, ranges2 = False):
   if not ranges2: ranges2 = [(0, stop1) for start1, stop1 in ranges1]
   return tuple( get_slice(range1, range2) for range1, range2 in zip(ranges1, ranges2) )
 
