@@ -1,7 +1,7 @@
 import numpy as np
 
 def zeros(ranges, arrayshape):
-  block = np.zeros(get_shape(ranges))
+  block         = np.zeros(tuple(stop-start for start, stop in ranges))
   return ArrayBlock(block, ranges, arrayshape)
 
 def trim(arrblock, ranges):
@@ -13,7 +13,7 @@ def trim(arrblock, ranges):
 def extend(arrblock, ranges):
   arrblock      = asblock(arrblock)
   slices        = get_slices(arrblock.ranges, ranges)
-  block         = np.zeros(get_shape(ranges))
+  block         = np.zeros(tuple(stop-start for start, stop in ranges))
   block[slices] = arrblock.block
   return ArrayBlock(block, ranges, arrblock.arrayshape)
 
@@ -60,37 +60,36 @@ class ArrayBlock:
 
     def binary_operation(self, other, operation):
       if hasattr(other, 'shape') and not other.shape is ():
-        other  = asblock(other)
+        other  = asblock(other, self.arrayranges)
         ranges = get_containing_ranges(self.ranges, other.ranges)
-        block1 = extend( self, ranges).block
-        block2 = extend(other, ranges).block
+        item1  = extend( self, ranges).block
+        item2  = extend(other, ranges).block
       else:
         ranges = self.ranges
-        block1 = self.block
-        block2 = other
-      block = operation(block1, block2)
+        item1  = self.block
+        item2  = other
+      block = operation(item1, item2)
       return ArrayBlock(block, ranges, self.arrayshape).view()
 
 
-def asblock(array):
+def asblock(array, arrayranges=None):
   if isinstance(array, ArrayBlock): return array
   ranges = [(0, dim) for dim in array.shape]
+  if arrayranges and not ranges==arrayranges:
+    raise Exception("Can't combine {} of shape {} with this ArrayBlock instance".format(type(array).__name__, array.shape))
   return ArrayBlock(array, ranges, array.shape)
-
-def get_shape(ranges):
-  return tuple(stop-start for start, stop in ranges)
 
 def get_containing_ranges(ranges1, ranges2):
   return [(min(start1,start2), max(stop1,stop2)) for (start1,stop1),(start2,stop2) in zip(ranges1, ranges2)]
 
-def get_slices(subranges, supranges=None):
-  if supranges is None: supranges = [(0, substop) for substart, substop in subranges]
-  return tuple( get_slice(subrange, suprange) for subrange, suprange in zip(subranges, supranges) )
+def get_slices(ranges1, ranges2=None):
+  if not ranges2: ranges2 = [(0, stop1) for start1, stop1 in ranges1]
+  return tuple( get_slice(range1, range2) for range1, range2 in zip(ranges1, ranges2) )
 
-def get_slice((substart, substop), (supstart, supstop)):
-  if not supstart <= substart <= substop <= supstop:
-    raise Exception('Block range {} out of bounds {}'.format((substart, substop), (supstart, supstop)))
-  return slice(substart-supstart, substop-supstart)
+def get_slice((start1, stop1), (start2, stop2)):
+  if not start2 <= start1 <= stop1 <= stop2:
+    raise Exception('Block range {} out of bounds {}'.format((start1, stop1), (start2, stop2)))
+  return slice(start1-start2, stop1-start2)
 
 def check_args(block, ranges, arrayshape):
   if not type(block) in (np.ndarray, np.matrix):
