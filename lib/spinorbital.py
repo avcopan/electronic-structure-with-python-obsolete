@@ -1,8 +1,8 @@
 import psi4
 import numpy as np
-from scipy import linalg as la
-from index import Index
-from permutation import Permute as P
+from scipy           import linalg as la
+from lib.index       import Index
+from lib.permutation import Permute as P
 
 class SpinOrbital:
 
@@ -41,7 +41,7 @@ class SpinOrbital:
       D        = indx.zeros("ia")
       fpp      = np.diag(fockmat)
       fii, faa = fpp[:nocc], fpp[nocc:]
-      D.array  = 1./(fii.reshape(-1,1) - faa.reshape(1,-1))
+      D.block  = 1./(fii.reshape(-1,1) - faa.reshape(1,-1))
       return D
 
     def build_Ep2(self, fockmat=None):
@@ -50,7 +50,7 @@ class SpinOrbital:
       D        = indx.zeros("ijab")
       fpp      = np.diag(fockmat)
       fii, faa = fpp[:nocc], fpp[nocc:]
-      D.array  = 1./( fii.reshape(-1,1,1,1) + fii.reshape(1,-1,1,1)
+      D.block  = 1./( fii.reshape(-1,1,1,1) + fii.reshape(1,-1,1,1)
                     - faa.reshape(1,1,-1,1) - faa.reshape(1,1,1,-1) )
       return D
 
@@ -60,7 +60,7 @@ class SpinOrbital:
       D        = indx.zeros("ijkabc")
       fpp      = np.diag(fockmat)
       fii, faa = fpp[:nocc], fpp[nocc:]
-      D.array  = 1./( fii.reshape(-1,1,1,1,1,1) + fii.reshape(1,-1,1,1,1,1) + fii.reshape(1,1,-1,1,1,1)
+      D.block  = 1./( fii.reshape(-1,1,1,1,1,1) + fii.reshape(1,-1,1,1,1,1) + fii.reshape(1,1,-1,1,1,1)
                     - faa.reshape(1,1,1,-1,1,1) - faa.reshape(1,1,1,1,-1,1) - faa.reshape(1,1,1,1,1,-1) )
       return D
 
@@ -81,9 +81,9 @@ class SpinOrbital:
       G, C, indx = self.G, self.C, self.indx
       return indx.meinsum('pqrs', 1, P("rs"), (G,"PQRS"), (C,"Pp"), (C,"Qq"), (C,"Rr"), (C,"Ss"))
 
-    def rotate_orbitals(self, X):
+    def rotate_orbitals(self, A):
       C = np.matrix(self.C)
-      U = la.expm(X - X.transpose())
+      U = la.expm(A) # A must be an antisymmetric rotation generator, i.e. (X - X.T)
       self.C = C * U
 
 def block_matrix_aa(A):

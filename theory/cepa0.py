@@ -1,7 +1,7 @@
 import psi4
-from spinorbital import SpinOrbital
-from index       import Index
-from permutation import Permute as P, Identity as I
+from lib.spinorbital import SpinOrbital
+from lib.index       import Index
+from lib.permutation import Permute as P, Identity as I
 
 
 class SpinOrbCEPA0:
