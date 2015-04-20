@@ -44,8 +44,8 @@ class ArrayBlock:
       arrayshape = tuple(self.arrayshape[axis] for axis in axes)
       return ArrayBlock(block, ranges, arrayshape)
 
-    def get_T(self): return self.transpose()
-    T = property(get_T, None)
+    def transposer(self): return self.transpose()
+    T = property(transposer, None)
 
     def __pos__(self): return ArrayBlock(+self.block, self.ranges, self.arrayshape)
     def __neg__(self): return ArrayBlock(-self.block, self.ranges, self.arrayshape)
@@ -72,10 +72,10 @@ class ArrayBlock:
       return ArrayBlock(block, ranges, self.arrayshape).view()
 
 
-def asblock(array, arrayranges=None):
+def asblock(array, arrayranges = False):
   if isinstance(array, ArrayBlock): return array
   ranges = [(0, dim) for dim in array.shape]
-  if arrayranges and not ranges==arrayranges:
+  if arrayranges and not ranges == arrayranges:
     raise Exception("Can't combine {} of shape {} with this ArrayBlock instance".format(type(array).__name__, array.shape))
   return ArrayBlock(array, ranges, array.shape)
 
@@ -98,3 +98,4 @@ def check_args(block, ranges, arrayshape):
     raise Exception('Inconsistent block shape {} for array shape {}'.format(block.shape, arrayshape))
   if not all(stop-start == blkdim for (start,stop), blkdim in zip(ranges, block.shape)):
     raise Exception('Inconsistent shape {} for block ranges {}'.format(block.shape, ranges))
+
