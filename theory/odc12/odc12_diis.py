@@ -1,5 +1,4 @@
 import psi4
-import numpy as np
 from scipy           import linalg as la
 from lib.diis        import DIIS
 from lib.spinorbital import SpinOrbital
@@ -10,7 +9,6 @@ from lib.permutation import Permute as P, Identity as I, Transpose as Tp
 class SpinOrbODC12:
 
     def __init__(self, scfwfn, mints):
-      diis      = DIIS()
       spinorb   = SpinOrbital(scfwfn, mints)
       Ep2       = spinorb.build_Ep2()                  # Ep2 = 1/(fii+fjj-faa-fbb)
       K         = spinorb.build_mo_K()                 # K   = <p|Phi><Phi|q> single-det density matrix
@@ -21,13 +19,14 @@ class SpinOrbODC12:
       indx.add_index_range(   0, nocc, 'ijklm')
       indx.add_index_range(nocc,  dim, 'abcde')
       # save what we need to object
-      self.diis, self.spinorb, self.indx = diis, spinorb, indx
+      self.spinorb, self.indx = spinorb, indx
       self.Ep2, self.K, self.h, self.g   = Ep2, K, h, g
       self.E, self.Vnu = 0.0, psi4.get_active_molecule().nuclear_repulsion_energy()
 
     def odc12_energy(self):
-      diis, spinorb, indx     = self.diis, self.spinorb, self.indx
+      spinorb, indx     = self.spinorb, self.indx
       Ep2, K, h, g, Vnu, nocc = self.Ep2, self.K, self.h, self.g, self.Vnu, spinorb.nocc
+      if do_diis: diis = DIIS()
       L = indx.einsum('ijab', (g,"ijab"), (Ep2,"ijab"))
 
       for i in range(maxiter):

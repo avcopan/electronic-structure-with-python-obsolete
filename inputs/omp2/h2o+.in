@@ -1,0 +1,27 @@
+molecule {
+  1 2
+  O 
+  H 1 0.96
+  H 1 0.96 2 104.5
+}
+set e_convergence          13
+set d_convergence          13
+set r_convergence          13
+set maxiter                100
+set basis                  sto-3g
+set reference              uhf
+set scf_type               pk
+energy('scf')
+
+# call my python module
+# note: you need meinsum/ in your PYTHONPATH to run this
+# grep "@OMP2" to see results
+
+from theory.omp2.omp2 import SpinOrbOMP2
+
+scfwfn = psi4.wavefunction()
+mints  = psi4.MintsHelper()
+omp2   = SpinOrbOMP2(scfwfn, mints)
+omp2.omp2_energy()
+
+psi4.print_out("\n@OMP2   {:20.15f}".format(energy('conv-omp2')))

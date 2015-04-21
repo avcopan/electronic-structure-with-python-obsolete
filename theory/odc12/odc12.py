@@ -75,12 +75,12 @@ class SpinOrbODC12:
         np.fill_diagonal(tF, 0.)
 
         L = Ep2 * indx.meinsums('ijab',
-              [ 1.  , P("ab")   , (tF,"ac"  ), (L,"ijcb")],
-              [-1.  , P("ij")   , (tF,"ki"  ), (L,"kjab")],
-              [ 1.  , I         , (g ,"ijab")            ],
-              [ 1./2, I         , (g ,"ijkl"), (L,"klab")],
-              [ 1./2, I         , (g ,"abcd"), (L,"ijcd")],
-              [-1.  , P("ij|ab"), (g ,"kbjc"), (L,"ikac")] )
+                    [ 1.  , P("ab")   , (tF,"ac"  ), (L,"ijcb")],
+                    [-1.  , P("ij")   , (tF,"ki"  ), (L,"kjab")],
+                    [ 1.  , I         , (g ,"ijab")            ],
+                    [ 1./2, I         , (g ,"ijkl"), (L,"klab")],
+                    [ 1./2, I         , (g ,"abcd"), (L,"ijcd")],
+                    [-1.  , P("ij|ab"), (g ,"kbjc"), (L,"ikac")] )
 
         E = indx.meinsums('',
               [1.  , I, (h,"pq"  ), (G1,"pq"  )],
