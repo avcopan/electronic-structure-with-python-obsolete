@@ -11,18 +11,15 @@ set maxiter       100
 set basis         sto-3g
 set reference     uhf
 set scf_type      pk
-Escf  = energy('scf')
+energy('scf')
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
-# grep "@CCSD" to see results
+# grep "@CCD" to see results
 
-from theory.ccsd.ccsd_diis import SpinOrbCCSD
+from theory.ccd.ccd_diis import SpinOrbCCD
 
 scfwfn = psi4.wavefunction()
 mints  = psi4.MintsHelper()
-ccsd  = SpinOrbCCSD(scfwfn, mints)
-ccsd.ccsd_energy()
-
-Ecorr = energy('ccsd')
-psi4.print_out("\n@CCSD   {:20.15f}".format(Ecorr-Escf))
+ccd    = SpinOrbCCD(scfwfn, mints)
+ccd.ccd_energy()
