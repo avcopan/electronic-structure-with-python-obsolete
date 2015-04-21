@@ -7,7 +7,7 @@ set e_convergence 13
 set d_convergence 13
 set r_convergence 13
 set maxiter       100
-set basis         dzp
+set basis         3-21g
 set scf_type      pk
 Escf  = energy('scf')
 
@@ -15,7 +15,7 @@ Escf  = energy('scf')
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CCSD" to see results
 
-from theory.ccsd.ccsd import SpinOrbCCSD
+from theory.ccsd.ccsd_diis import SpinOrbCCSD
 
 scfwfn = psi4.wavefunction()
 mints  = psi4.MintsHelper()

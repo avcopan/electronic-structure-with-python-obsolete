@@ -12,7 +12,7 @@ class SpinOrbCEPA0:
       nocc    = spinorb.nocc
       dim     = spinorb.dim
       Ep      = spinorb.build_Ep2()                  # Ep = 1/(fii+fjj-faa-fbb)
-      f       = spinorb.build_mo_F()                 # f  = <p|h|q> + <pi||qi>
+      f       = spinorb.build_mo_F()                 # f  = <p|h|q> + sum_i <pi||qi>
       g       = spinorb.build_mo_antisymmetrized_G() # g  = <pq||rs>
       indx    = Index(dim, 'pqrs')
       indx.add_index_range(   0, nocc, 'ijkl')
