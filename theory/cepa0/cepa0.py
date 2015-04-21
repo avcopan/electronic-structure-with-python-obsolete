@@ -36,10 +36,10 @@ class SpinOrbCEPA0:
         self.E = E
 
         psi4.print_out('\n@CEPA0{:-3d}{:20.15f}{:20.15f}'.format(i, E, dE))
-        if(abs(dE) < e_conv): break
+        if(abs(dE) < econv): break
 
       return self.E
 
-
+# keyword values
 maxiter = psi4.get_global_option('MAXITER')
-e_conv  = psi4.get_global_option('E_CONVERGENCE')
+econv   = psi4.get_global_option('E_CONVERGENCE')
