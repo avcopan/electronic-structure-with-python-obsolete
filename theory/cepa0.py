@@ -23,7 +23,7 @@ class SpinOrbCEPA0:
       indx, Ep, g = self.indx, self.Ep, self.g
       t = indx.einsum('ijab', (g,"ijab"), (Ep,"ijab"))
 
-      for i in range( psi4.get_global_option('MAXITER') ):
+      for i in range(maxiter):
 
         t = Ep * indx.meinsums('ijab',# Bartlett, p. 288
                    [ 1.  , I         , (g,"abij")            ], #t01
@@ -36,7 +36,10 @@ class SpinOrbCEPA0:
         self.E = E
 
         psi4.print_out('\n@CEPA0{:-3d}{:20.15f}{:20.15f}'.format(i, E, dE))
-        if(abs(dE) < psi4.get_global_option('E_CONVERGENCE')): break
+        if(abs(dE) < e_conv): break
 
       return self.E
 
+
+maxiter = psi4.get_global_option('MAXITER')
+e_conv  = psi4.get_global_option('E_CONVERGENCE')
