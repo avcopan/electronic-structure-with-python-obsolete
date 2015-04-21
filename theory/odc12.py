@@ -1,6 +1,7 @@
 import psi4
 import numpy as np
 from scipy           import linalg as la
+from lib.diis        import DIIS
 from lib.spinorbital import SpinOrbital
 from lib.index       import Index
 from lib.permutation import Permute as P, Identity as I, Transpose as Tp
@@ -9,6 +10,7 @@ from lib.permutation import Permute as P, Identity as I, Transpose as Tp
 class SpinOrbODC12:
 
     def __init__(self, scfwfn, mints):
+      diis      = DIIS()
       spinorb   = SpinOrbital(scfwfn, mints)
       Ep2       = spinorb.build_Ep2()                  # Ep2 = 1/(fii+fjj-faa-fbb)
       h         = spinorb.build_mo_H()                 # h   = <p|T+V|q>  one-electron integrals
@@ -18,14 +20,16 @@ class SpinOrbODC12:
       indx.add_index_range(   0, nocc, 'ijklm')
       indx.add_index_range(nocc,  dim, 'abcde')
       # save what we need to object
-      self.spinorb, self.indx, self.Ep2, self.h, self.g = spinorb, indx, Ep2, h, g
+      self.diis, self.spinorb, self.indx, self.Ep2, self.h, self.g = diis, spinorb, indx, Ep2, h, g
       self.E, self.Vnu = 0.0, psi4.get_active_molecule().nuclear_repulsion_energy()
 
     def odc12_energy(self):
-      spinorb, indx, Ep2, h, g = self.spinorb, self.indx, self.Ep2, self.h, self.g
+      diis, spinorb, indx, Ep2, h, g = self.diis, self.spinorb, self.indx, self.Ep2, self.h, self.g
       L = indx.einsum('ijab', (g,"ijab"), (Ep2,"ijab"))
 
-      for i in range( psi4.get_global_option('MAXITER') ):
+      for i in range(maxiter):
+
+        if do_diis and i >= diis_start: L, = diis.extrapolate()
 
         K = spinorb.build_mo_K()
 
@@ -33,14 +37,14 @@ class SpinOrbODC12:
               ['ij',-1./2, I, (L,"ikab"), (L,"jkab")],
               ['ab', 1./2, I, (L,"ijac"), (L,"ijbc")] )
 
-        for j in range( psi4.get_global_option('MAXITER') ):
+        for j in range(maxiter):
           T0 = T
           T  = indx.meinblock('pq',
                  ['ij',-1.  , I, (T,"ik"  ), (T,"kj"  )],
                  ['ij',-1./2, I, (L,"ikab"), (L,"jkab")],
                  ['ab', 1.  , I, (T,"ac"  ), (T,"cb"  )],
                  ['ab', 1./2, I, (L,"ijac"), (L,"ijbc")] )
-          if(la.norm(T-T0) < psi4.get_global_option('R_CONVERGENCE')): break
+          if(la.norm(T-T0) < r_conv): break
 
         G1  = K + T
 
@@ -84,6 +88,8 @@ class SpinOrbODC12:
 
         L   = L + Ep2 * R
 
+        if do_diis: diis.add_vec((L, R.block))
+
         E   = indx.meinsums('',
                 [1.  , I, (h,"pq"  ), (G1,"pq"  )],
                 [1./4, I, (g,"pqrs"), (G2,"pqrs")] ) + self.Vnu
@@ -92,7 +98,13 @@ class SpinOrbODC12:
         self.E = E
 
         psi4.print_out('\n@ODC12{:-3d}{:20.15f}{:20.15f}'.format(i, E, dE))
-        if(abs(dE) < psi4.get_global_option('E_CONVERGENCE')): break
+        if(abs(dE) < e_conv): break
 
       return self.E
 
+# dump these here
+maxiter    = psi4.get_global_option('MAXITER')
+do_diis    = psi4.get_global_option('DIIS')
+diis_start = psi4.get_global_option('DIIS_START')
+r_conv     = psi4.get_global_option('R_CONVERGENCE')
+e_conv     = psi4.get_global_option('E_CONVERGENCE')
