@@ -1,0 +1,27 @@
+molecule {
+  0 1
+  O 
+  H 1 0.96
+  H 1 0.96 2 104.5
+}
+set e_convergence 13
+set d_convergence 13
+set maxiter       100
+set basis         sto-3g
+set df_basis_cc   heavy-aug-cc-pwcvqz-ri
+set scf_type      pk
+Escf  = energy('scf')
+
+# call my python module
+# note: you need meinsum/ in your PYTHONPATH to run this
+# grep "@CCD" to see results
+
+from theory.ccd.ccd import SpinOrbCCD
+
+scfwfn = psi4.wavefunction()
+mints  = psi4.MintsHelper()
+ccd  = SpinOrbCCD(scfwfn, mints)
+ccd.ccd_energy()
+
+Ecorr = energy('df-ccd')
+psi4.print_out("\n@CCD   {:20.15f}".format(Ecorr-Escf))
