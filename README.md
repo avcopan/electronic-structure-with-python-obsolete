@@ -40,6 +40,8 @@ The corresponding equations are
 Example codes and input files are provided.
 These can be run as `psi4 input.dat` with a recent version of [psi4](https://github.com/psi4/psi4public), once this directory has been added to your PYTHONPATH (e.g. `export PYTHONPATH=/path/to/meinsum/`).
 
+This is primarily intended for my own personal use, but comments and suggestions are welcome.
+
 ===
 <sub>
 Copyright Andreas V. Copan 2015
