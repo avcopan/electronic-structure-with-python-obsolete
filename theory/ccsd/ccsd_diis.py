@@ -19,7 +19,7 @@ class SpinOrbCCSD:
       indx.add_index_range(   0, nocc, 'ijklmn')
       indx.add_index_range(nocc,  dim, 'abcdef')
       # save what we need to object
-      self.indx, self.Ep1, self.Ep2, self.f, self.g = indx, Ep1, Ep2, f, g
+      self.spinorb, self.indx, self.Ep1, self.Ep2, self.f, self.g = spinorb, indx, Ep1, Ep2, f, g
       self.E  = 0.0
 
     def ccsd_energy(self):
@@ -90,6 +90,9 @@ class SpinOrbCCSD:
 
         psi4.print_out('\n@CCSD{:-3d}{:20.15f}{:20.15f}'.format(i, E, dE))
         if(abs(dE) < econv): break
+
+      self.t1 = t1
+      self.t2 = t2
 
       return self.E
 
