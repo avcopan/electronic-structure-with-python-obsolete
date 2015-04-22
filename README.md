@@ -30,7 +30,8 @@ for i in range(maxiter):
 
 E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
-where the *P* operators are provided by the permutation module.
+where the *P* operators are provided by the permutation module, which supports arbitrary permutations of the form *P(i/jk|a/bc...)* as defined in Shavitt and Bartlett *Many-Body Methods*.
 The corresponding equations are
 ![CCD Equations](.images/ccd.png)
-(see Shavitt and Bartlett *Many-Body Methods* for defails).
+(see Shavitt and Bartlett for details).
+
