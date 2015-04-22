@@ -30,4 +30,6 @@ for i in range(maxiter):
 
 E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
-where the permutation operators (such as $P(ij|ab)$) are provided by the permutation module.
+where the *P* operators are provided by the permutation module.
+![CCD Equations](.images/ccd-eqs.pdf)
+Format: ![Alt Text](url)
