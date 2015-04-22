@@ -1,5 +1,5 @@
 # meinsum
-## electronic structure for minimalists
+## electronic structure code for minimalists
 
 A small collection of python modules for programming electronic structure codes in simple spin-orbital form.  Primarily designed to be used with [psi4](https://github.com/psi4/psi4public), building on the functionality of [psi4numpy](https://github.com/dgasmith/psi4numpy).  The tensor contraction modules ([index](https://github.com/avcopan/meinsum/blob/master/lib/index.py) and [block](https://github.com/avcopan/meinsum/blob/master/lib/block.py)), permutation module ([permutation](https://github.com/avcopan/meinsum/blob/master/lib/permutation.py)), and DIIS module ([diis](https://github.com/avcopan/meinsum/blob/master/lib/diis.py)) can be used independently.  The goal is to allow one to write code that looks as much as possible like the equations to be implemented.
 
@@ -33,6 +33,7 @@ E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
 where the *P* operators are provided by the permutation module.
 The corresponding equations are
+
 ![CCD Equations](ccd.png)
 (see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form *P(i/jk|a/bc...)* as defined by Shavitt and Bartlett.
 
