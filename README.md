@@ -35,7 +35,7 @@ where the *P* operators are provided by the permutation module.
 The corresponding equations are
 
 ![CCD Equations](ccd.png)
-(see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form *P(i/jk|a/bc...)* as defined by Shavitt and Bartlett.
+(see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form `P(i/jk|a/bc...)` as defined by Shavitt and Bartlett.
 
 Example codes and input files are provided.
 These can be run as `psi4 input.dat` with a recent version of the program, once this directory has been added to your PYTHONPATH (e.g. `export PYTHONPATH=/path/to/meinsum/`).
