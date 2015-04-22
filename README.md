@@ -13,7 +13,7 @@ indx = Index(dim, 'pqrs')
 indx.add_index_range(   0, nocc, 'ijkl')
 indx.add_index_range(nocc,  dim, 'abcd')
 ```
-Using this Index object, one can solve for the coupled-cluster doubles (CCD) energy as
+Using this `Index` object, one can solve for the coupled-cluster doubles (CCD) energy as
 ```python
 t = indx.einsum('ijab', (Ep,"ijab"), (g,"ijab"))
 
