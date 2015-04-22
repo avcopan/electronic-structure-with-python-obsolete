@@ -1,8 +1,9 @@
 # meinsum
-## simple electronic structure codes in Python
+## electronic structure for minimalists
 
-A small collection of modules for writing spin-orbital quantum chemistry codes.  Primarily designed to be used with [psi4](https://github.com/psi4/psi4public), building on the functionality introduced with [psi4numpy](https://github.com/dgasmith/psi4numpy).  The tensor contraction modules ([index](https://github.com/avcopan/meinsum/blob/master/lib/index.py) and [block](https://github.com/avcopan/meinsum/blob/master/lib/block.py)), permutation module ([permutation](https://github.com/avcopan/meinsum/blob/master/lib/permutation.py)), and DIIS module ([diis](https://github.com/avcopan/meinsum/blob/master/lib/diis.py)) can be used independently.  The goal is to allow one to write code that looks as much as possible like the equations of the theory.
+A small collection of python modules for programming electronic structure codes in simple spin-orbital form.  Primarily designed to be used with [psi4](https://github.com/psi4/psi4public), building on the functionality of [psi4numpy](https://github.com/dgasmith/psi4numpy).  The tensor contraction modules ([index](https://github.com/avcopan/meinsum/blob/master/lib/index.py) and [block](https://github.com/avcopan/meinsum/blob/master/lib/block.py)), permutation module ([permutation](https://github.com/avcopan/meinsum/blob/master/lib/permutation.py)), and DIIS module ([diis](https://github.com/avcopan/meinsum/blob/master/lib/diis.py)) can be used independently.  The goal is to allow one to write code that looks as much as possible like the equations to be implemented.
 
+Spin-orbital codes are not intended for production-level efficiency.  However, you will see a substantial speed-up if your versions of `numpy` and `scipy` make use of an optimized BLAS library such as [openblas](http://www.openblas.net/), since the contractions are wrapped around `numpy`'s `tensordot`.
 
 Probably most useful is the index module, which allows one to associate index characters with specific contraction ranges.
 ```python
@@ -30,8 +31,10 @@ for i in range(maxiter):
 
 E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
-where the *P* operators are provided by the permutation module, which supports arbitrary permutations of the form *P(i/jk|a/bc...)* as defined by Shavitt and Bartlett (*Many-Body Methods*, 2009).
+where the *P* operators are provided by the permutation module.
 The corresponding equations are
 ![CCD Equations](.images/ccd.png)
-(see Shavitt and Bartlett for details).
+(see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form *P(i/jk|a/bc...)* as defined by Shavitt and Bartlett.
 
+Example codes and input files are provided.
+These can be run as `psi4 input.dat` with a recent version of the program, once this directory has been added to your PYTHONPATH (e.g. `export PYTHONPATH=/path/to/meinsum/`).
