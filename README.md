@@ -44,7 +44,7 @@ This is primarily intended for my own personal use, but comments and suggestions
 
 ===
 <sub>
-meinsum Copyright (C) 2015 Andreas V. Copan
+`meinsum` copyright &copy; 2015 Andreas V. Copan
 
 <sub>
 This program is free software: you can redistribute it and/or modify
