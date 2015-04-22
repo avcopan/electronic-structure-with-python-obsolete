@@ -41,6 +41,7 @@ Example codes and input files are provided.
 These can be run as `psi4 input.dat` with a recent version of [psi4](https://github.com/psi4/psi4public), once this directory has been added to your PYTHONPATH (e.g. `export PYTHONPATH=/path/to/meinsum/`).
 
 ===
+<sub>
 Copyright Andreas V. Copan 2015
 
 This program is free software: you can redistribute it and/or modify
@@ -55,3 +56,4 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</sub>
