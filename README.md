@@ -33,7 +33,7 @@ E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
 where the *P* operators are provided by the permutation module.
 The corresponding equations are
-![CCD Equations](.images/ccd.png)
+![CCD Equations](ccd.png)
 (see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form *P(i/jk|a/bc...)* as defined by Shavitt and Bartlett.
 
 Example codes and input files are provided.
