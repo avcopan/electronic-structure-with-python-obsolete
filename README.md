@@ -12,7 +12,7 @@ indx = Index(dim, 'pqrs')
 indx.add_index_range(   0, nocc, 'ijkl')
 indx.add_index_range(nocc,  dim, 'abcd')
 ```
-Using this Index object, one cans solve for the coupled-cluster doubles (CCD) energy as
+Using this Index object, one can solve for the coupled-cluster doubles (CCD) energy as
 ```python
 t = indx.einsum('ijab', (g,"ijab"), (Ep,"ijab"))
 
@@ -31,5 +31,6 @@ for i in range(maxiter):
 E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
 where the *P* operators are provided by the permutation module.
-![CCD Equations](.images/ccd-eqs.pdf)
-Format: ![Alt Text](url)
+The corresponding equations are
+![CCD Equations](.images/ccd-eqs.png)
+(see Shavitt and Bartlett *Many-Body Methods* for defails).
