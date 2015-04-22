@@ -31,7 +31,7 @@ for i in range(maxiter):
 
 E = 1./4 * indx.einsum('', (g,"ijab"), (t,"ijab"))
 ```
-where the *P* operators are provided by the permutation module.
+where the `P` operators are provided by the permutation module.
 The corresponding equations are
 
 ![CCD Equations](ccd.png)
