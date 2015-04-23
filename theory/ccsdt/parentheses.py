@@ -4,7 +4,7 @@ from lib.index             import Index
 from lib.permutation       import Permute as P, Identity as I
 
 
-class SpinOrbCCSDparT:
+class SpinOrbCCSDpT:
 
     def __init__(self, scfwfn, mints):
       ccsd    = SpinOrbCCSD(scfwfn, mints)
@@ -22,12 +22,21 @@ class SpinOrbCCSDparT:
       # save what we need to object
       self.indx, self.Esd, self.t1, self.t2, self.g, self.Ep3 = indx, Esd, t1, t2, g, Ep3
 
-    def ccsdpart_energy(self):
-      indx, Esd, t1, t2, f, Ep3 = self.indx, self.Esd, self.t1, self.t2, self.g, self.Ep3
+    def ccsdpt_energy(self):
+      indx, Esd, t1, t2, g, Ep3 = self.indx, self.Esd, self.t1, self.t2, self.g, self.Ep3
 
-      Et = Ep3 * indx.meinsums('',
-                   [ 1./4, P("i/jk|a/bc"), (g,"eibc"), (g ,"fibc"), (t2,"aejk"), (t2,"ajfk")],
-                   [-1./2, P("i/jk|a/bc"), (g,"eibc"), (t2,"aejk"), (g ,"majk"), (t2,"imbc")],
-                   [ 1./4, P("i/jk|a/bc"), (g,"majk"), (g ,"najk"), (t2,"imbc"), (t2,"inbc")],
+      ct3 = Ep3 * indx.meinsums('ijkabc',
+                    [ 1., P("i/jk|a/bc"), (g,"eibc"), (t2,"jkae")],
+                    [-1., P("i/jk|a/bc"), (g,"majk"), (t2,"imbc")])
 
+      dt3 = Ep3 * indx.meinsums('ijkabc',
+                    [ 1., P("i/jk|a/bc"), (g,"jkbc"), (t1,"ia"  )])
+
+      Et  = indx.meinsum('', 1./36, I, (ct3/Ep3,"ijkabc"), (ct3+dt3,"ijkabc"))
+
+      psi4.print_out('\n@CCSD(T) Esd   = {:20.15f}'.format(Esd   ))
+      psi4.print_out('\n@CCSD(T) Et    = {:20.15f}'.format(Et    ))
+      psi4.print_out('\n@CCSD(T) Ecorr = {:20.15f}'.format(Esd+Et))
+
+      return Esd + Et
 
