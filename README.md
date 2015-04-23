@@ -35,7 +35,7 @@ where the **P** operators are provided by the permutation module.
 The corresponding equations are
 
 ![CCD Equations](ccd.png)
-(see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form **P(i/jk|a/bc...)** as defined by Shavitt and Bartlett.
+(see Shavitt and Bartlett *Many-Body Methods* for details).  The permutation module supports arbitrary permutations of the form **P(i/jk|a/bc...)** as defined by Shavitt and Bartlett.  This module is especially useful for methods like [CCSD(T)](https://github.com/avcopan/meinsum/blob/master/theory/ccsdt/parentheses.py).
 
 Example codes and input files are provided.
 These can be run as `psi4 input.dat` with a recent version of [psi4](https://github.com/psi4/psi4public), once this directory has been added to your PYTHONPATH (e.g. `export PYTHONPATH=/path/to/meinsum/`).
