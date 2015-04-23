@@ -18,9 +18,9 @@ class Compressor:
     def compress(self, T, index):
       indx, no, nv = self.indx, self.no, self.nv
       T, k = indx.trim(T, index).block, len(index)/2
+      cT = np.zeros(comb(no, k) * comb(nv, k))
       o  = it.combinations(range(no), k)
       v  = it.combinations(range(nv), k)
-      cT = np.zeros(comb(no, k) * comb(nv, k))
       for ind, (oind, vind) in enumerate(it.product(o, v)): cT[ind] = T[oind+vind]
       return cT
 
