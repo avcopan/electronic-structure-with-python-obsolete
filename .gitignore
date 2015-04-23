@@ -1,5 +1,5 @@
+.images/*
 *.pyc
 *.swp
-.images
-*.images
-.images/*
+*.clean
+*.dat
