@@ -1,8 +1,8 @@
 import psi4
 import numpy as np
-from lib.spinorbital import SpinOrbital
-from lib.index       import Index
-from lib.permutation import Permute as P, Identity as I, Transpose as Tp
+from meinsum.spinorbital import SpinOrbital
+from meinsum.index       import Index
+from meinsum.permutation import Permute as P, Identity as I, Transpose as Tp
 
 
 class SpinOrbOMP2:

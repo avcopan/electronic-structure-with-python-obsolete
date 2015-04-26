@@ -1,7 +1,7 @@
 import psi4
-from theory.ccsd.ccsd_diis import SpinOrbCCSD
-from lib.index             import Index
-from lib.permutation       import Permute as P, Identity as I
+from ..ccsd.ccsd_diis    import SpinOrbCCSD
+from meinsum.index       import Index
+from meinsum.permutation import Permute as P, Identity as I
 
 
 class SpinOrbCCSDbT:

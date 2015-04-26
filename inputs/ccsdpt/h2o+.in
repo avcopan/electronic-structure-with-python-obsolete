@@ -17,7 +17,7 @@ Escf  = energy('scf')
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CCSD(T)" to see results
 
-from theory.ccsdt.parentheses import SpinOrbCCSDpT
+from examples.ccsdt.parentheses import SpinOrbCCSDpT
 
 scfwfn  = psi4.wavefunction()
 mints   = psi4.MintsHelper()

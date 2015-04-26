@@ -17,7 +17,7 @@ energy('scf')
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@OMP2" to see results
 
-from theory.omp2.omp2 import SpinOrbOMP2
+from examples.omp2.omp2 import SpinOrbOMP2
 
 scfwfn = psi4.wavefunction()
 mints  = psi4.MintsHelper()

@@ -16,7 +16,7 @@ Escf  = energy('scf')
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CEPA0" to see results
 
-from theory.cepa0.cepa0_diis import SpinOrbCEPA0
+from examples.cepa0.cepa0_diis import SpinOrbCEPA0
 
 scfwfn = psi4.wavefunction()
 mints  = psi4.MintsHelper()

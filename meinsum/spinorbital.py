@@ -1,8 +1,8 @@
 import psi4
 import numpy as np
-from scipy           import linalg as la
-from lib.index       import Index
-from lib.permutation import Permute as P
+from scipy       import linalg as la
+from index       import Index
+from permutation import Permute as P
 
 class SpinOrbital:
 

@@ -1,8 +1,8 @@
 import numpy     as np
 import itertools as it
-from scipy.misc      import comb
-from lib.index       import Index
-from lib.permutation import Permute as P
+from scipy.misc  import comb
+from index       import Index
+from permutation import Permute as P
 
 '''Compress/uncompress T-amplitude-like tensors -- nice for DIIS storage of T3 = Tijkabc.
    Compressed tensor is 1d array of unique elements, i.e. i<j<k, a<b<c'''

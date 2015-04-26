@@ -1,6 +1,6 @@
 import numpy     as np
 import itertools as it
-import lib.block as bl
+import block     as bl
 
 class Index:
 

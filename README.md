@@ -7,7 +7,7 @@ Spin-orbital codes are not intended for production-level efficiency, but you wil
 
 Probably most useful is the index module, which allows one to associate index characters with specific contraction ranges.
 ```python
-from lib.index import Index
+from meinsum.index import Index
 
 indx = Index(dim, 'pqrs')
 indx.add_index_range(   0, nocc, 'ijkl')
