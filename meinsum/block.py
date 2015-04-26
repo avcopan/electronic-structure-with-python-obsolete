@@ -31,10 +31,11 @@ class ArrayBlock:
       self.arrayranges = [(0, dim) for dim in arrayshape]
       self.ndim        = len(arrayshape)
 
-    def view(self):
-      if not self.shape in [self.arrayshape, ()]: return self
-      elif self.ndim is 2:                        return np.matrix(self.block)
-      else:                                       return self.block
+    def view(self, astype=None):
+      if astype in [np.ndarray, np.matrix]:         return self.block.view(astype)
+      elif not self.shape in [self.arrayshape, ()]: return self
+      elif self.ndim is 2:                          return np.matrix(self.block)
+      else:                                         return self.block
 
     def transpose(self, *axes):
       if axes is (): axes = tuple(range(self.block.ndim)[::-1])

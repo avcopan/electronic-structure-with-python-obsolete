@@ -40,7 +40,7 @@ class SpinOrbCEPA0:
 
         t = t + Ep * R
 
-        if do_diis: diis.add_vec((t, R.block))
+        if do_diis: diis.add_vec((t, R))
 
         E      = indx.meinsum('', 0.25, I, (g,"ijab"), (t,"ijab"))
         dE     = E - self.E

@@ -79,7 +79,7 @@ class SpinOrbCCSD:
         t1 = t1 + Ep1 * R1
         t2 = t2 + Ep2 * R2
 
-        if do_diis: diis.add_vec((t1, R1.block), (t2, R2.block))
+        if do_diis: diis.add_vec((t1, R1), (t2, R2))
 
         E      = indx.meinsums('',
                    [1./4, I, (g,"ijab"), (t2,"ijab")            ],

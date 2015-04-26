@@ -22,7 +22,8 @@ class DIIS:
       B = np.zeros((m, m)) # define blocks of A in Ax=b
       for i in range(m):
         for j in range(i, m):
-          B[i,j] = B[j,i] = sum(np.vdot(e1, e2) for e1, e2 in zip(errorss[i], errorss[j]))
+          B[i,j] = B[j,i] = sum(np.vdot(e1.view(np.ndarray), e2.view(np.ndarray))
+                                for e1, e2 in zip(errorss[i], errorss[j]))
       o = np.matrix([-1.]*m)
       z = np.matrix([ 0.]  )
       A = np.bmat ([[B, o.T], [o, z]]) # A = [[B, -1], [-1, 0]]
