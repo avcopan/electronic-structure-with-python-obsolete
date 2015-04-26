@@ -9,6 +9,7 @@ class SpinOrbital:
     def __init__(self, scfwfn, mints):
       nocc = scfwfn.nalpha() + scfwfn.nbeta()
       dim  = mints.basisset().nbf() * 2
+      Vnu  = psi4.get_active_molecule().nuclear_repulsion_energy()
       indx = Index(dim, 'pqrsPQRS')
       indx.add_index_range(0   , nocc, 'ijkl')
       indx.add_index_range(nocc,  dim, 'abcd')
@@ -32,8 +33,12 @@ class SpinOrbital:
       # compute integrals
       H = block_matrix_aa(Ta) + block_matrix_aa(Va)
       G = block_4darray(Ga).swapaxes(1,2) # < mu nu | rh si >, phys. notation
-      self.nocc, self.dim, self.indx = nocc, dim, indx
+      self.nocc, self.dim, self.Vnu, self.indx = nocc, dim, Vnu, indx
       self.e, self.C, self.S, self.H, self.G, self.F = e, C, S, H, G, F
+
+    def compute_Escf(self):
+      h, f, K = self.build_mo_H(), self.build_mo_F(), self.build_mo_K()
+      return np.trace(1./2*(h+f)*K) + self.Vnu
 
     def build_Ep1(self, fockmat=None):
       indx, nocc = self.indx, self.nocc
