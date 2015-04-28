@@ -1,7 +1,7 @@
 import psi4
 from meinsum.spinorbital import SpinOrbital
 from meinsum.index       import Index
-from meinsum.permutation import Permute as P, Identity as I
+from meinsum.permutation import Identity as I
 
 
 class SpinOrbMP2:
@@ -22,8 +22,7 @@ class SpinOrbMP2:
     def mp2_energy(self):
       indx, Ep, g = self.indx, self.Ep, self.g
 
-      t = indx.einsum ('ijab',      (g,"ijab"), (Ep,"ijab"))
-      E = indx.meinsum('', 1./4, I, (g,"ijab"), (t ,"ijab"))
+      E = indx.meinsum('', 1./4, I, (g*g,"ijab"), (Ep,"ijab"))
 
       psi4.print_out('\n@MP2   {:20.15f}'.format(E))
       return self.E
