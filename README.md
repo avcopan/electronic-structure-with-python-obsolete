@@ -3,7 +3,7 @@
 
 A small collection of python modules for programming electronic structure theories in simple spin-orbital form.  Primarily designed to be used with [psi4](http://www.psicode.org/), building on the functionality of [psi4numpy](https://github.com/dgasmith/psi4numpy).  The tensor contraction modules ([index](https://github.com/avcopan/meinsum/blob/master/meinsum/index.py) and [block](https://github.com/avcopan/meinsum/blob/master/meinsum/block.py)), permutation module ([permutation](https://github.com/avcopan/meinsum/blob/master/meinsum/permutation.py)), and DIIS module ([diis](https://github.com/avcopan/meinsum/blob/master/meinsum/diis.py)) can be used independently.  The goal is to allow one to write code that looks as much as possible like the equations to be implemented.
 
-Spin-orbital codes are not intended for production-level efficiency, but you will see a substantial speed-up if your versions of `numpy` and `scipy` make use of an optimized BLAS library (e.g. [openblas](http://www.openblas.net/)) since the contractions are wrapped around `numpy.tensordot`.  You can check your BLAS/LAPACK linkage by running `import numpy; numpy.__config__.show()`.
+Spin-orbital codes are not intended for production-level efficiency, but you will see a substantial speed-up if your versions of `numpy` and `scipy` make use of an optimized BLAS library (e.g. [openblas](http://www.openblas.net/)) since the contractions are wrapped around `numpy.tensordot`.  You can check your BLAS/LAPACK linkage by running `import numpy; numpy.__config__.show()` in your python interpreter.
 
 Probably most useful is the index module, which allows one to associate index characters with specific contraction ranges.
 ```python
