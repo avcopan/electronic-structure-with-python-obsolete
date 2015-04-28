@@ -36,7 +36,7 @@ class Index:
       block        = np.einsum(indexarg, *arrayarg)
       ranges       = self.ranges    (targetindex)
       arrayshape   = self.arrayshape(targetindex)
-      return bl.ArrayBlock(block, ranges, arrayshape).view()
+      return bl.ArrayBlock(block, ranges, arrayshape).view() if not arrayshape is () else block
 
     def eindot(self, targetindex, *arrayindexpairs):
       pairs        = self.optimize_order(*arrayindexpairs)
@@ -45,7 +45,7 @@ class Index:
       block        = transpose(array, targetindex, index)
       ranges       = self.ranges    (targetindex)
       arrayshape   = self.arrayshape(targetindex)
-      return bl.ArrayBlock(block, ranges, arrayshape).view()
+      return bl.ArrayBlock(block, ranges, arrayshape).view() if not arrayshape is () else block
 
     def meinsum(self, targetindex, coefficient, permutations, *arrayindexpairs):
       block = coefficient * self.eindot(targetindex, *arrayindexpairs)

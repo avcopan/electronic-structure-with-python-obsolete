@@ -23,4 +23,3 @@ scfwfn = psi4.wavefunction()
 mints  = psi4.MintsHelper()
 mp2    = SpinOrbMP2(scfwfn, mints)
 mp2.mp2_energy()
-
