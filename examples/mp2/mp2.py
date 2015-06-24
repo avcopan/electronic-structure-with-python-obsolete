@@ -1,7 +1,7 @@
 import psi4
 from meinsum.spinorbital import SpinOrbital
 from meinsum.index       import Index
-from meinsum.permutation import Identity as I
+from meinsum.permutation import identity as I
 
 
 class SpinOrbMP2:

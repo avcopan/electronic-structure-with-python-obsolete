@@ -27,9 +27,9 @@ def pair(ref, per, sign=False):
 
 '''use these'''
 
-Identity = [pair('','')]
+identity = [pair('','')]
 
-def Permute(string):
+def permute(string):
   subs    = st.split(string, '|')
   ref     = st.translate(string, None, '/|')
   subpers = [permute_nonequivalent(sub) for sub in subs]
@@ -37,7 +37,7 @@ def Permute(string):
     per = ''.join(it.chain(*prod))
     yield   pair(ref, per, sign=True)
 
-def Transpose(string):
+def transpose(string):
   subs    = st.split(string, '|')
   ref     = st.translate(string, None, '|')
   for per in it.permutations(subs):

@@ -2,7 +2,7 @@ import psi4
 import numpy as np
 from scipy       import linalg as la
 from index       import Index
-from permutation import Permute as P
+from permutation import permute as P
 
 class SpinOrbital:
 

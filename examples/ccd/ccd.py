@@ -1,7 +1,7 @@
 import psi4
 from meinsum.spinorbital import SpinOrbital
 from meinsum.index       import Index
-from meinsum.permutation import Permute as P, Identity as I
+from meinsum.permutation import permute as P, identity as I
 
 
 class SpinOrbCCD:
