@@ -86,9 +86,8 @@ class SpinOrbital:
       G, C, indx = self.G, self.C, self.indx
       return indx.meinsum('pqrs', 1, P("rs"), (G,"PQRS"), (C,"Pp"), (C,"Qq"), (C,"Rr"), (C,"Ss"))
 
-    def rotate_orbitals(self, A):
-      C = np.matrix(self.C)
-      U = la.expm(A) # A must be an antisymmetric rotation generator, i.e. (X - X.T)
+    def rotate_orbitals(self, U):
+      C, U = np.matrix(self.C), np.matrix(U)
       self.C = C * U
 
 def block_matrix_aa(A):

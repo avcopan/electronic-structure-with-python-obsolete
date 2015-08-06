@@ -1,5 +1,6 @@
 import psi4
-import numpy as np
+import numpy        as np
+import scipy.linalg as la
 from meinsum.spinorbital import SpinOrbital
 from meinsum.index       import Index
 from meinsum.permutation import permute as P, identity as I, transpose as Tp
@@ -46,8 +47,9 @@ class SpinOrbOMP2:
         Ep1 = spinorb.build_Ep1()
         w   =  2 * (F - F.T)
         X   = -1./2 * indx.einsum('ai', (w,"ia"), (Ep1,"ia"))
+        U   = la.expm(X - X.T)
 
-        spinorb.rotate_orbitals(X - X.T)
+        spinorb.rotate_orbitals(U)
 
         h   = spinorb.build_mo_H()
         g   = spinorb.build_mo_antisymmetrized_G()
