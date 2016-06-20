@@ -1,8 +1,8 @@
 import psi4
-from meinsum.diis        import DIIS
-from meinsum.spinorbital import SpinOrbital
-from meinsum.index       import Index
-from meinsum.permutation import permute as P, identity as I
+from meinsum.meinsum.diis        import DIIS
+from meinsum.meinsum.spinorbital import SpinOrbital
+from meinsum.meinsum.index       import Index
+from meinsum.meinsum.permutation import permute as P, identity as I
 
 
 class SpinOrbCCD:
@@ -54,6 +54,7 @@ class SpinOrbCCD:
         psi4.print_out('\n@CCD{:-3d}{:20.15f}{:20.15f}'.format(i, E, dE))
         if(abs(dE) < econv): break
 
+      psi4.print_out("\n")
       return self.E
 
 # keyword values

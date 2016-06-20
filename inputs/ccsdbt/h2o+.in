@@ -1,4 +1,4 @@
-molecule {
+molecule mol {
   1 2
   O 
   H 1 0.96
@@ -11,17 +11,16 @@ set maxiter       100
 set basis         sto-3g
 set reference     uhf
 set scf_type      pk
-Escf  = energy('scf')
+Escf, scfwfn  = energy('scf', return_wfn=True)
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CCSD[T]" to see results
 
-from examples.ccsdt.brackets import SpinOrbCCSDbT
+from meinsum.examples.ccsdt.brackets import SpinOrbCCSDbT
 
-scfwfn  = psi4.wavefunction()
-mints   = psi4.MintsHelper()
+basisname = psi4.get_global_option("BASIS")
+basisset  = psi4.BasisSet.pyconstruct_orbital(mol, "BASIS", basisname)
+mints     = psi4.MintsHelper(basisset)
 ccsdbt  = SpinOrbCCSDbT(scfwfn, mints)
 ccsdbt.ccsdbt_energy()
-
-# psi4 doesn't print this -- hope it's right

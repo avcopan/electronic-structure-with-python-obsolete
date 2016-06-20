@@ -1,27 +1,28 @@
-molecule {
+molecule mol {
   0 1
   N
   N 1 1.0
 }
-set e_convergence          13
-set d_convergence          13
-set r_convergence          13
-set cutoff                 18
-set max_mograd_convergence 10
-set maxiter                100
-set basis                  3-21g
-set scf_type               pk
-energy('scf')
+set e_convergence 13
+set d_convergence 13
+set r_convergence 13
+set maxiter       100
+set basis         3-21g
+set scf_type      pk
+set mp2_type      conv
+Escf, scfwfn  = energy('scf', return_wfn=True)
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@OMP2" to see results
 
-from examples.omp2.omp2 import SpinOrbOMP2
+from meinsum.examples.omp2.omp2 import SpinOrbOMP2
 
-scfwfn = psi4.wavefunction()
-mints  = psi4.MintsHelper()
-omp2   = SpinOrbOMP2(scfwfn, mints)
+basisname = psi4.get_global_option("BASIS")
+basisset  = psi4.BasisSet.pyconstruct_orbital(mol, "BASIS", basisname)
+mints     = psi4.MintsHelper(basisset)
+omp2      = SpinOrbOMP2(scfwfn, mints)
 omp2.omp2_energy()
 
-psi4.print_out("\n@OMP2   {:20.15f}".format(energy('conv-omp2')))
+Eomp2 = energy('omp2')
+psi4.print_out("\n@OMP2   {:20.15f}".format(Eomp2-Escf))

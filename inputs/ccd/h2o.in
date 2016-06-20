@@ -1,4 +1,4 @@
-molecule {
+molecule mol {
   0 1
   O 
   H 1 0.96
@@ -10,18 +10,20 @@ set maxiter       100
 set basis         sto-3g
 set df_basis_cc   heavy-aug-cc-pwcvqz-ri
 set scf_type      pk
-Escf  = energy('scf')
+set cc_type       df
+Escf, scfwfn  = energy('scf', return_wfn=True)
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CCD" to see results
 
-from examples.ccd.ccd_diis import SpinOrbCCD
+from meinsum.examples.ccd.ccd_diis import SpinOrbCCD
 
-scfwfn = psi4.wavefunction()
-mints  = psi4.MintsHelper()
-ccd    = SpinOrbCCD(scfwfn, mints)
+basisname = psi4.get_global_option("BASIS")
+basisset  = psi4.BasisSet.pyconstruct_orbital(mol, "BASIS", basisname)
+mints     = psi4.MintsHelper(basisset)
+ccd       = SpinOrbCCD(scfwfn, mints)
 ccd.ccd_energy()
 
-Ecorr = energy('df-ccd')
+Ecorr = energy('ccd')
 psi4.print_out("\n@CCD   {:20.15f}".format(Ecorr-Escf))

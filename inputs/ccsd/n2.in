@@ -1,4 +1,4 @@
-molecule {
+molecule mol {
   0 1
   N
   N 1 1.0
@@ -9,18 +9,19 @@ set r_convergence 13
 set maxiter       100
 set basis         3-21g
 set scf_type      pk
-Escf  = energy('scf')
+Escf, scfwfn  = energy('scf', return_wfn=True)
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CCSD" to see results
 
-from examples.ccsd.ccsd_diis import SpinOrbCCSD
+from meinsum.examples.ccsd.ccsd_diis import SpinOrbCCSD
 
-scfwfn = psi4.wavefunction()
-mints  = psi4.MintsHelper()
-ccsd  = SpinOrbCCSD(scfwfn, mints)
+basisname = psi4.get_global_option("BASIS")
+basisset  = psi4.BasisSet.pyconstruct_orbital(mol, "BASIS", basisname)
+mints     = psi4.MintsHelper(basisset)
+ccsd      = SpinOrbCCSD(scfwfn, mints)
 ccsd.ccsd_energy()
 
-Ecorr = energy('ccsd')
-psi4.print_out("\n@CCSD   {:20.15f}".format(Ecorr-Escf))
+Eccsd = energy('ccsd')
+psi4.print_out("\n@CCSD   {:20.15f}".format(Eccsd-Escf))

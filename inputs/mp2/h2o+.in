@@ -1,4 +1,4 @@
-molecule {
+molecule mol {
   1 2
   O 
   H 1 0.96
@@ -8,18 +8,23 @@ set e_convergence 13
 set d_convergence 13
 set r_convergence 13
 set maxiter       100
-set basis         sto-3g
+set basis         cc-pvdz
 set reference     uhf
 set scf_type      pk
-energy('scf')
+set mp2_type      conv
+Escf, scfwfn  = energy('scf', return_wfn=True)
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@MP2" to see results
 
-from examples.mp2.mp2 import SpinOrbMP2
+from meinsum.examples.mp2.mp2 import SpinOrbMP2
 
-scfwfn = psi4.wavefunction()
-mints  = psi4.MintsHelper()
-mp2    = SpinOrbMP2(scfwfn, mints)
+basisname = psi4.get_global_option("BASIS")
+basisset  = psi4.BasisSet.pyconstruct_orbital(mol, "BASIS", basisname)
+mints     = psi4.MintsHelper(basisset)
+mp2       = SpinOrbMP2(scfwfn, mints)
 mp2.mp2_energy()
+
+Emp2 = energy('mp2')
+psi4.print_out("\n@MP2   {:20.15f}".format(Emp2-Escf))

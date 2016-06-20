@@ -1,9 +1,9 @@
 import psi4
 import numpy        as np
 import scipy.linalg as la
-from meinsum.spinorbital import SpinOrbital
-from meinsum.index       import Index
-from meinsum.permutation import permute as P, identity as I, transpose as Tp
+from meinsum.meinsum.spinorbital import SpinOrbital
+from meinsum.meinsum.index       import Index
+from meinsum.meinsum.permutation import permute as P, identity as I, transpose as Tp
 
 
 class SpinOrbOMP2:

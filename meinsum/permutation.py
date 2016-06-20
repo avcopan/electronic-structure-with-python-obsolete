@@ -1,46 +1,37 @@
 import itertools as it
-import string    as st
+import numpy     as np
+import string
+from tensorshuffle.block_permutations import BlockPermutations
 
-'''helper functions'''
+def get_block_permutations_from_index_string(index_string):
+  if not '/' in index_string: index_string = '/'.join(index_string)
+  index_equivalent_subsets = [list(equivalent_index_string) for equivalent_index_string in index_string.split('/')]
+  elements = tuple(sum(index_equivalent_subsets, []))
+  composition = tuple(len(index_equivalent_subset) for index_equivalent_subset in index_equivalent_subsets)
+  return BlockPermutations(elements, composition).iter_permutations_with_signature()
 
-def permute_nonequivalent(string):
-  if not '/' in string: string = '/'.join(string)
-  subs  = st.split(string, '/')
-  ref   = st.translate(string, None, '/')
-  pools = [st.replace(ref, sub, char) for sub in subs for char in sub]
+def make_string_permuter(reference_string, permuted_string):
+  return lambda s: string.translate(s, string.maketrans(reference_string, permuted_string))
+
+def permute(index_strings_with_bars):
+  index_strings = index_strings_with_bars.split('|')
+  reference_string = string.translate(index_strings_with_bars, None, '/|')
+  pools = [get_block_permutations_from_index_string(index_string) for index_string in index_strings]
   for prod in it.product(*pools):
-    if len(prod) == len(set(prod)):
-      yield prod
+    signs, permuted_subsets = zip(*prod)
+    sign = np.product(signs)
+    permuted_string = ''.join(sum(permuted_subsets, ()))
+    permuter = make_string_permuter(reference_string, permuted_string)
+    yield sign, permuter
 
-def parity(ref, per):
-  sgn, per = +1, list(per)
-  for c in ref:
-    i, j = ref.index(c), per.index(c)
-    sgn *= -1 if not i is j else +1
-    per[i], per[j] = per[j], per[i]
-  return sgn
+identity = [(+1, lambda s:s)]
 
-def pair(ref, per, sign=False):
-  sgn = parity(ref, per) if sign else +1
-  pmt = lambda x: st.translate(x, st.maketrans(ref, per))
-  return sgn, pmt
-
-'''use these'''
-
-identity = [pair('','')]
-
-def permute(string):
-  subs    = st.split(string, '|')
-  ref     = st.translate(string, None, '/|')
-  subpers = [permute_nonequivalent(sub) for sub in subs]
-  for prod in it.product(*subpers):
-    per = ''.join(it.chain(*prod))
-    yield   pair(ref, per, sign=True)
-
-def transpose(string):
-  subs    = st.split(string, '|')
-  ref     = st.translate(string, None, '|')
-  for per in it.permutations(subs):
-    per = ''.join(per)
-    yield   pair(ref, per)
+def transpose(index_string_with_bar):
+  try:
+    upper_indices, lower_indices = index_string_with_bar.split('|')
+    reference_string = upper_indices + lower_indices
+    transpose_string = lower_indices + upper_indices
+    return identity + [(+1, make_string_permuter(reference_string, transpose_string))]
+  except:
+    raise Exception("Invalid argument {:s} passed to transpose().".format(index_string_with_bar))
 

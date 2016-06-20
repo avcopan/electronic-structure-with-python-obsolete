@@ -1,4 +1,4 @@
-from meinsum.permutation import identity, transpose, permute
+from meinsum.meinsum.permutation import identity, transpose, permute
 
 def test_permutation_identity():
   assert [(sgn, per('ijab'))   for sgn, per in identity            ] == [( 1, 'ijab'  )]
@@ -22,6 +22,7 @@ def test_permutation_permute_3():
                                                                          (-1, 'jiab'  ),
                                                                          ( 1, 'jiba'  )]
 def test_permutation_permute_4():
+  print 
   assert [(sgn, per('ijkabc')) for sgn, per in permute('ij/k|ab/c')] == [( 1, 'ijkabc'),
                                                                          (-1, 'ijkacb'),
                                                                          (-1, 'ijkcba'),

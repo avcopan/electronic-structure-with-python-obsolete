@@ -1,27 +1,29 @@
-molecule {
+molecule mol {
   1 2
   O 
   H 1 0.96
   H 1 0.96 2 104.5
 }
-set e_convergence 13
+set e_convergence 10
 set d_convergence 13
+set r_convergence 10
 set maxiter       100
 set basis         sto-3g
 set reference     uhf
 set scf_type      pk
-Escf  = energy('scf')
+Escf, scfwfn  = energy('scf', return_wfn=True)
 
 # call my python module
 # note: you need meinsum/ in your PYTHONPATH to run this
 # grep "@CEPA0" to see results
 
-from examples.cepa0.cepa0_diis import SpinOrbCEPA0
+from meinsum.examples.cepa0.cepa0_diis import SpinOrbCEPA0
 
-scfwfn = psi4.wavefunction()
-mints  = psi4.MintsHelper()
-cepa0  = SpinOrbCEPA0(scfwfn, mints)
+basisname = psi4.get_global_option("BASIS")
+basisset  = psi4.BasisSet.pyconstruct_orbital(mol, "BASIS", basisname)
+mints     = psi4.MintsHelper(basisset)
+cepa0     = SpinOrbCEPA0(scfwfn, mints)
 cepa0.cepa0_energy()
 
-Ecorr = energy('cepa0')
-psi4.print_out("\n@CEPA0   {:20.15f}".format(Ecorr-Escf))
+Ecepa = energy('lccd')
+psi4.print_out("\n@CEPA0   {:20.15f}".format(Ecepa-Escf))
