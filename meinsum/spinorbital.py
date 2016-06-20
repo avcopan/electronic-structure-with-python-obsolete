@@ -26,7 +26,10 @@ class SpinOrbital:
       # build and diagonalize spin-orbital Fock matrix
       F     = block_matrix_ab(Fa, Fb)
       S     = block_matrix_aa(Sa)
-      X     = np.matrix(la.inv(la.sqrtm(S)))
+      s, U  = la.eigh(S)
+      U     = np.matrix(U)
+      x     = 1./np.sqrt(s).real
+      X     = U * np.diag(x) * U.T
       tF    = X * F * X
       e, tC = la.eigh(tF)
       C     = X * tC
@@ -70,9 +73,9 @@ class SpinOrbital:
       return D
 
     def build_mo_K(self):
-      nocc, S, C = self.nocc, np.matrix(self.S), np.matrix(self.C)
-      oC = C[:,:nocc]
-      return C.T * S * oC * oC.T * S * C
+      K = np.identity(self.dim)
+      K[self.nocc:,self.nocc:] = 0
+      return K
 
     def build_mo_F(self):
       F, C = np.matrix(self.F), np.matrix(self.C)
