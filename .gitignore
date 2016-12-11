@@ -3,3 +3,6 @@
 *.swp
 *.clean
 *.dat
+*.out
+.cache
+__pycache__

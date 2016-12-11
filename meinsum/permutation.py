@@ -1,7 +1,7 @@
 import itertools as it
 import numpy     as np
 import string
-from tensorshuffle.block_permutations import BlockPermutations
+from tensorshuffle.permutations import BlockPermutations
 
 def get_block_permutations_from_index_string(index_string):
   if not '/' in index_string: index_string = '/'.join(index_string)
