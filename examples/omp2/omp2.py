@@ -45,8 +45,8 @@ class SpinOrbOMP2:
                [ 1./2, I, (g,"prst"), (G2,"stqr")])
 
         Ep1 = spinorb.build_Ep1()
-        w   =  2 * (F - F.T)
-        X   = -1./2 * indx.einsum('ai', (w,"ia"), (Ep1,"ia"))
+        w   =  (F - F.T)
+        X   = - indx.einsum('ai', (w,"ia"), (Ep1,"ia"))
         U   = la.expm(X - X.T)
 
         spinorb.rotate_orbitals(U)
